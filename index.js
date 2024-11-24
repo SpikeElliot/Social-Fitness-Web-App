@@ -2,6 +2,7 @@
 const express = require('express'); // Express
 const ejs = require('ejs'); // EJS
 const mysql = require('mysql2'); // MySQL (for database)
+const session = require('express-session'); // Session for user account log-ins
 
 // Create the express application object
 const app = express();
@@ -35,6 +36,36 @@ db.connect((err) => {
 
 global.db = db; // Set global database variable
 
+// Define data for session
+app.use(session({
+    secret: 'paperpadlock',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {expires: 600000}
+}));
+
+// Redirects user to home page when user logged in
+const redirectHome = (req, res, next) => {
+    if (req.session.user) {
+        res.redirect('/');
+    } else {
+        next(); // Move to next middleware function
+    }
+};
+
+// Redirects user to login page when user not logged in
+const redirectLogin = (req, res, next) => {
+    if (!req.session.user) {
+        res.redirect('/login'); 
+    } else {
+        next(); // Move to next middleware function
+    }
+};
+
+// Set global redirect functions
+global.redirectHome = redirectHome;
+global.redirectLogin = redirectLogin;
+
 // Load the route handlers
 
 // Main routes
@@ -48,6 +79,10 @@ app.use(('/login', loginRoutes));
 // Register routes
 const registerRoutes = require('./routes/register');
 app.use(('/register', registerRoutes));
+
+// User profile routes
+const profileRoutes = require('./routes/profile');
+app.use(('/profile', profileRoutes));
 
 // Start the web app listening
 app.listen(port, () => console.log(`Node app listening on port: ${port}`));

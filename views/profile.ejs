@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+    <head>
+    <title><%=username%> - <%=appData.appName%></title>
+    <link rel="stylesheet" type="text/css" href="/main.css"/>
+    </head>
+    <body>
+        <h1><%=appData.appName%></h1>
+        <h2><%=username%></h2>
+        <p>Followers: <%=follower_count%></p>
+        <p>Following: <%=following_count%></p>
+        <!-- Conditionals for when user's country or city are null in database -->
+        <p>Country:
+            <% if (country != null) { %>
+                <%=country%>
+            <% } else { %>
+                Not provided
+            <% } %>
+        </p>
+        <p>City:
+            <% if (city != null) { %>
+                <%=city%>
+            <% } else { %>
+                Not provided
+            <% } %>
+        </p>
+        <p>Date joined: <%=date_joined%></p>
+    </body>
+</html>

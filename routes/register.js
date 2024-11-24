@@ -1,11 +1,12 @@
+// REQUIRED MODULES
 const express = require('express');
 const bcrypt = require('bcrypt'); // Bcrypt module for hashing passwords
 const saltRounds = 10; // Number of rounds for hash salting function
 const router = express.Router(); // Create a router object
 
-// Route handlers
+// ROUTE HANDLERS
 
-router.get('/register', (req, res, next) => {
+router.get('/register', redirectHome, (req, res, next) => {
     res.render('register.ejs');                                                             
 });  
 
@@ -26,7 +27,7 @@ router.post('/registered', (req, res, next) => {
                 return;
             }
             res.redirect('/login'); // Redirect to login page if no errors
-        })
+        });
     });                                                              
 });
 
