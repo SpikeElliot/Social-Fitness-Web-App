@@ -3,6 +3,7 @@ const express = require('express'); // Express
 const ejs = require('ejs'); // EJS
 const mysql = require('mysql2'); // MySQL (for database)
 const session = require('express-session'); // Session for user account log-ins
+const validator = require('express-validator'); // For validation and sanitisation
 
 // Create the express application object
 const app = express();

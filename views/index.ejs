@@ -3,12 +3,20 @@
     <head>
         <title><%=appData.appName%></title>
         <link rel="stylesheet" type="text/css" href="/main.css"/>
+        <script src="script.js"></script> 
     </head>
     <body>
-        <h1><%=appData.appName%></h1>
-        <p><a href='/profile/<%=username%>'>Your Profile</a></p>
-        <p><a href='#'>Page 2</a></p>
-        <p><a href='#'>Page 3</a></p>
-        <p><a href='#'>About Us</a></p>
+        <h1><a href="/"><%=appData.appName%></a></h1>
+        <h2>Tell us your thoughts or share an achievement!</h2>
+        <form method="POST" action="/posted">
+            <textarea id="postTextBox" type="text" onkeyup="displayPostCharCount()" placeholder="Type something..." maxlength="255" rows="8" cols="60"></textarea>
+            <p id="postCharCount"></p>
+            <input type="submit" value="Post"/>
+        </form>
+        <br>
+        <p><a href="/profile/<%=username%>">Your Profile</a></p>
+        <p><a href="#">Page 2</a></p>
+        <p><a href="#">Page 3</a></p>
+        <p><a href="#">About Us</a></p>
     </body>
 </html>

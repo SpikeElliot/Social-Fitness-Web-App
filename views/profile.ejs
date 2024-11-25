@@ -5,7 +5,7 @@
     <link rel="stylesheet" type="text/css" href="/main.css"/>
     </head>
     <body>
-        <h1><%=appData.appName%></h1>
+        <h1><a href="/"><%=appData.appName%></a></h1>
         <h2><%=username%></h2>
         <p>Followers: <%=follower_count%></p>
         <p>Following: <%=following_count%></p>
@@ -24,6 +24,6 @@
                 Not provided
             <% } %>
         </p>
-        <p>Date joined: <%=date_joined%></p>
+        <p>Date joined: <%=date_joined.toLocaleString()%></p>
     </body>
 </html>
