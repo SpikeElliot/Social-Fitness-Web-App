@@ -7,10 +7,16 @@
     </head>
     <body>
         <h1><a href="/"><%=appData.appName%></a></h1>
+        <!-- Search box -->
+        <form method="GET" action="/search">
+            <input id="searchBox" type="text" name="searchtext" placeholder="Search for something...">
+            <input type="submit" value="Search">
+        </form>
         <h2>Tell us your thoughts or share an achievement!</h2>
         <form method="POST" action="/posted">
-            <textarea id="postTextBox" type="text" onkeyup="displayPostCharCount()" placeholder="Type something..." maxlength="255" rows="8" cols="60"></textarea>
+            <textarea id="postTextBox" type="text" name="content" onkeyup="displayPostCharCount()" placeholder="Type something..." maxlength="255" rows="8" cols="60"></textarea>
             <p id="postCharCount"></p>
+            <input type="hidden" name="userid" value=<%=id%>>
             <input type="submit" value="Post"/>
         </form>
         <br>

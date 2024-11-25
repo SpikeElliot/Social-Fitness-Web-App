@@ -26,18 +26,18 @@ router.post('/loggedin', loginValidation, (req, res, next) => {
                     WHERE username = '${req.body.username}'`;
     db.query(sqlquery, (err, result) => { // Execute sql query
         // Error handling
-        if (err) next(err); // Move to next middleware function
-        if (result.length == 0) { // Send error message when no match found
+        if (err || result.length == 0) { // Send error message when no match found
             res.send('Error: user not found');
             return;
         }
         // If matching username found in database, get their hashed pw
         let hashedPw = result[0].hashed_password.toString();
+        let user_id = result[0].user_id;
         // Compare hashed input to hashed password of user in database
         bcrypt.compare(req.body.password, hashedPw, (err, result) => {
             if (err) next(err);
             if (result) { // Passwords match, log user in and redirect to home
-                req.session.user = {id: req.body.user_id, 
+                req.session.user = {id: user_id, 
                                     username: req.body.username};
                 res.redirect('/');
             } else { // Passwords don't match, send error message

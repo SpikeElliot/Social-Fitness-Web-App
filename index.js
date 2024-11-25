@@ -85,5 +85,9 @@ app.use(('/register', registerRoutes));
 const profileRoutes = require('./routes/profile');
 app.use(('/profile', profileRoutes));
 
+// Post search routes
+const searchRoutes = require('./routes/search');
+app.use(('/search', searchRoutes));
+
 // Start the web app listening
 app.listen(port, () => console.log(`Node app listening on port: ${port}`));

@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+    <head>
+        <title><%=appData.appName%> - Search for <%=searchtext%></title>
+        <link rel="stylesheet"  type="text/css" href="/main.css" />
+    </head>
+    <body>
+        <h1><a href="/"><%=appData.appName%></a></h1>
+        <!-- Search box -->
+        <form method="GET" action="/search">
+            <input id="searchBox" type="text" name="searchtext" placeholder="Search for something...">
+            <input type="submit" value="Search">
+        </form>
+        <h2>Results for: <%=searchtext%></h2>
+        <ul>
+            <!-- For loop iterates through posts array -->
+            <% for (let i = 0; i < posts.length; i++) { %>
+            <!-- Display post info on page -->
+            <% p = posts[i]; %>
+            <li>
+                <h2><a href=/profile/<%=p.username%>><%=p.username%></a></h2>
+                <p><%=p.body%></p>
+                <p>Likes: <%=p.like_count%></p>
+                <p><%=p.date_posted.toLocaleString()%></p>
+            </li>
+            <% } %>
+        </ul>
+    </body>
+</html>
