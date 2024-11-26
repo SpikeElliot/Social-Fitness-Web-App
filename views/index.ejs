@@ -16,13 +16,37 @@
         <form method="POST" action="/posted">
             <textarea id="postTextBox" type="text" name="content" onkeyup="displayPostCharCount()" placeholder="Type something..." maxlength="255" rows="8" cols="60"></textarea>
             <p id="postCharCount"></p>
-            <input type="hidden" name="userid" value=<%=id%>>
+            <input type="hidden" name="userid" value=<%=user.id%>>
             <input type="submit" value="Post"/>
         </form>
         <br>
-        <p><a href="/profile/<%=username%>">Your Profile</a></p>
-        <p><a href="#">Page 2</a></p>
-        <p><a href="#">Page 3</a></p>
-        <p><a href="#">About Us</a></p>
+        <p><a href="/profile/<%=user.username%>">Your Profile</a></p>
+        <p><a href="/activities">Your Activities</a></p>
+        <p><a href="/likedposts">Your Liked Posts</a></p>
+        <p><a href="/about">About Us</a></p>
+        <ul>
+            <!-- For loop iterates through posts array -->
+            <% for (let i = 0; i < posts.length; i++) { %>
+            <!-- Display post info on page -->
+            <% p = posts[i]; %>
+            <li>
+                <h2><a href=/profile/<%=p.username%>><%=p.username%></a></h2>
+                <p><%=p.body%></p>
+                <p>Likes: <%=p.like_count%></p>
+                <p><%=p.date_posted.toLocaleString()%></p>
+                <% if (likedposts[p.post_id]) { %>
+                    <form method="POST" action="postunliked">
+                        <input type="hidden" name="postID" value="<%=p.post_id%>"/>
+                        <input type="submit" value="Unlike"/>
+                    </form>
+                <% } else { %>
+                    <form method="POST" action="postliked">
+                        <input type="hidden" name="postID" value="<%=p.post_id%>"/>
+                        <input type="submit" value="Like"/>
+                    </form>
+                <% } %>
+            </li>
+            <% } %>
+        </ul>
     </body>
 </html>

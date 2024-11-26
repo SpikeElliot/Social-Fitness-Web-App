@@ -10,26 +10,73 @@ let searchValidation = [check('searchtext').escape().trim().notEmpty()];
 router.get('/search', searchValidation, redirectLogin, (req, res, next) => {
     // Check validation of fields
     const errors = validationResult(req);
-    if (!errors.isEmpty()) { // Reload the page if searchbar is empty
+    if (!errors.isEmpty()) { // Reload the page if search bar is empty
         res.redirect('/login');
         return;
     }
     // Query database to find posts containing search term
-    let sqlquery = `SELECT p.post_id, p.user_id, p.body, p.date_posted, p.like_count, u.username
+    let sqlquery = `SELECT p.*, u.username
                     FROM post p 
                     LEFT JOIN user u 
-                    ON p.user_id = u.user_id 
+                    ON p.user_id = u.user_id
                     WHERE p.body LIKE '%${req.query.searchtext}%'`;
     db.query(sqlquery, (err, result) => { // Execute sql query
         if (err) next(err); // Move to next middleware function
+
         if (result) {
-            newData = {searchtext: req.query.searchtext, posts: result}
-            res.render('postlist.ejs', newData);
-        } else { // Send error message when no match found
-            res.send('No posts found');
-            return;
+            let newData = {user: req.session.user, searchtext: req.query.searchtext, posts: result};
+            let sqlquery = `SELECT p.post_id
+                            FROM post p 
+                            INNER JOIN post_like pl
+                            ON p.post_id = pl.post_id 
+                            WHERE p.body LIKE '%${req.query.searchtext}%'
+                            AND pl.user_id = ${req.session.user.id}`;
+            db.query(sqlquery, (err, result) => {
+                if (err) next(err); // Move to next middleware function
+                let likedposts = {};
+                if (result) {
+                    for (let i = 0; i < result.length; i++) {
+                        likedposts[result[i].post_id] = "exists";
+                    }
+                    newData.likedposts = likedposts;
+                }
+                res.render('postlist.ejs', newData);
+            });
+        } else {
+            res.send('No posts found'); // Send error message when no match found
         }
      });
+});
+
+router.post('/postliked', (req, res, next) => {
+    let sqlquery = `INSERT INTO post_like (post_id, user_id)
+                    VALUES (${req.body.postID},${req.session.user.id})`;
+    db.query(sqlquery, (err, result) => {
+        if (err) return console.error(err.message);
+        let sqlquery = `UPDATE post
+                        SET like_count = like_count + 1
+                        WHERE post_id = ${req.body.postID}`;
+        db.query(sqlquery, (err, result) => {
+            if (err) return console.error(err.message); 
+        });
+        res.redirect('/');
+    });
+});
+
+router.post('/postunliked', (req, res, next) => {
+    let sqlquery = `DELETE FROM post_like
+                    WHERE post_id = ${req.body.postID} 
+                    AND user_id = ${req.session.user.id}`;
+    db.query(sqlquery, (err, result) => {
+        if (err) return console.error(err.message);
+        let sqlquery = `UPDATE post
+                        SET like_count = like_count - 1
+                        WHERE post_id = ${req.body.postID}`;
+        db.query(sqlquery, (err, result) => {
+            if (err) return console.error(err.message); 
+        });
+        res.redirect('/');
+    });
 });
 
 // Export the router so index.js can access it
