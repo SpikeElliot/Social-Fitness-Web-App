@@ -29,13 +29,13 @@ router.post('/registered', registerValidation, (req, res, next) => {
     const plainPassword = req.body.password;
     // Encrypt user's password using bcrypt hashing algorithm
     bcrypt.hash(plainPassword, saltRounds, (err, hashedPassword) => {
-        let sqlquery = `INSERT INTO user
+        let sqlQuery = `INSERT INTO user
                         (username, hashed_password, firstname, lastname, email) 
                         VALUES (?,?,?,?,?)`;
         // Create record for query
         let newrecord = [req.body.username, hashedPassword, req.body.firstname,
                         req.body.lastname, req.body.email];
-        db.query(sqlquery, newrecord, (err, result) => { // Execute sql query
+        db.query(sqlQuery, newrecord, (err, result) => { // Execute sql query
             if (err) { // Error handling
                 next(err);
                 return;

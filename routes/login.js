@@ -21,10 +21,10 @@ router.post('/loggedin', loginValidation, (req, res, next) => {
         return;
     }
     // Query database to find username matching input and get hashed pw
-    let sqlquery = `SELECT hashed_password, user_id
+    let sqlQuery = `SELECT hashed_password, user_id
                     FROM user 
                     WHERE username = '${req.body.username}'`;
-    db.query(sqlquery, (err, result) => { // Execute sql query
+    db.query(sqlQuery, (err, result) => { // Execute sql query
         // Error handling
         if (err || result.length == 0) { // Send error message when no match found
             res.send('Error: user not found');
