@@ -24,6 +24,7 @@
         <p><a href="/activities">Your Activities</a></p>
         <p><a href="/likedposts">Your Liked Posts</a></p>
         <p><a href="/about">About Us</a></p>
+        <% if (posts) { %>
         <ul>
             <!-- For loop iterates through posts array -->
             <% for (let i = 0; i < posts.length; i++) { %>
@@ -34,7 +35,7 @@
                 <p><%=p.body%></p>
                 <p>Likes: <%=p.like_count%></p>
                 <p><%=p.date_posted.toLocaleString()%></p>
-                <% if (likedposts[p.post_id]) { %>
+                <% if (p.is_liked) { %>
                     <form method="POST" action="postunliked">
                         <input type="hidden" name="postID" value="<%=p.post_id%>"/>
                         <input type="submit" value="Unlike"/>
@@ -48,5 +49,6 @@
             </li>
             <% } %>
         </ul>
+        <% } %>
     </body>
 </html>

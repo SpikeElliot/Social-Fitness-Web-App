@@ -1,11 +1,17 @@
 <!doctype html>
 <html>
     <head>
-    <title><%=profile.username%> - <%=appData.appName%></title>
+    <!-- Conditional for checking user profile has been found -->
+    <% let title = ""; %>
+    <% if (errMsg == null) {title = profile.username;} else {title = 'User Not Found';}%>
+    <% title += ` - ${appData.appName}`; %>
+    <title><%=title%></title>
     <link rel="stylesheet" type="text/css" href="/main.css"/>
     </head>
     <body>
         <h1><a href="/"><%=appData.appName%></a></h1>
+        <!-- Another check that user profile exists to prevent errors -->
+        <% if (errMsg == null) { %>
         <h2><%=profile.username%></h2>
         <p>Followers: <%=profile.follower_count%></p>
         <p>Following: <%=profile.following_count%></p>
@@ -35,7 +41,7 @@
                 <p><%=p.body%></p>
                 <p>Likes: <%=p.like_count%></p>
                 <p><%=p.date_posted.toLocaleString()%></p>
-                <% if (likedposts[p.post_id]) { %>
+                <% if (p.is_liked) { %>
                     <form method="POST" action="postunliked">
                         <input type="hidden" name="postID" value="<%=p.post_id%>"/>
                         <input type="submit" value="Unlike"/>
@@ -49,5 +55,8 @@
             </li>
             <% } %>
         </ul>
+        <% } else { %>
+            <p><%=errMsg%></p>
+        <% } %>
     </body>
 </html>

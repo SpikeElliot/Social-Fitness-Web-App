@@ -22,7 +22,7 @@
                 <p><%=p.body%></p>
                 <p>Likes: <%=p.like_count%></p>
                 <p><%=p.date_posted.toLocaleString()%></p>
-                <% if (likedposts[p.post_id]) { %>
+                <% if (p.is_liked) { %>
                     <form method="POST" action="postunliked">
                         <input type="hidden" name="postID" value="<%=p.post_id%>"/>
                         <input type="submit" value="Unlike"/>
