@@ -1,71 +1,84 @@
-// REQUIRED MODULES AND VARIABLES
 const express = require('express');
 const {check, validationResult} = require('express-validator'); // Validation
 const router = express.Router(); // Create a router object
 
 // ROUTE HANDLERS
 
+// Create sanitisation and validation chain for search box
 let searchValidation = [check('searchtext').escape().trim().notEmpty()];
 
 router.get('/search', searchValidation, redirectLogin, (req, res, next) => {
-    // Check validation of fields
     const errors = validationResult(req);
-    if (!errors.isEmpty()) { // Reload the page if search bar is empty
-        res.redirect('/login');
-        return;
+    if (!errors.isEmpty()) { // Handle search validation errors
+        // TO DO: Eventually add error message to give user without reloading page
+        return res.redirect('/login');
     }
-    // Query database to find posts containing search term
     let newRecord = [req.session.user.id, req.query.searchtext];
-    let sqlQuery = `CALL pr_searchedposts(?, ?);`;
-    db.query(sqlQuery, newRecord, (err, result) => { // Execute sql query
+    let sqlQuery = `CALL pr_searchedposts(?,?);`; // Search posts procedure
+    // Query database to find posts containing search term
+    db.query(sqlQuery, newRecord, searchPosts);
+
+    function searchPosts(err, result) {
         if (err) next(err); // Move to next middleware function
         // Create newData object to use in EJS view
-        let newData = {user: req.session.user, searchtext: req.query.searchtext, posts: result[0]};
-        if (result) { // If match found in database
-            console.log(newData);
-            res.render('postlist.ejs', newData);
-            return;
-        }
-        // Send error message when no match found
+        let newData = {user: req.session.user, 
+                       searchtext: req.query.searchtext,
+                       posts: result[0]};
+        // Case: Matching post found
+        if (result) return res.render('postlist.ejs', newData);
+        // Case: No matching post found
         res.send('No posts found');
-     });
+    }
 });
 
 // TO DO: Probably move these to their own '/post' route
 
 router.post('/postliked', (req, res, next) => {
+    let newRecord = [req.body.postID, req.session.user.id];
+    let sqlQuery = `CALL pr_makepostlike(?,?);`; // Insert user IDs into post_like procedure
     // Create new row in relationship table between post liked and liker
-    let sqlQuery = `INSERT INTO post_like (post_id, user_id)
-                    VALUES (${req.body.postID},${req.session.user.id})`;
-    db.query(sqlQuery, (err, result) => {
-        if (err) return console.error(err.message);
+    db.query(sqlQuery, newRecord, newPostLike);
+
+    function newPostLike(err, result) {
+        if (err) { // Handle MySQL Errors
+            res.redirect('/');
+            return console.error(err.message); 
+        }
+        let newRecord = [req.body.postID];
+        let sqlQuery = `CALL pr_incrementpostlikes(?);`; // Update post like_count procedure
         // Increment liked post's like counter by 1
-        let sqlQuery = `UPDATE post
-                        SET like_count = like_count + 1
-                        WHERE post_id = ${req.body.postID}`;
-        db.query(sqlQuery, (err, result) => {
-            if (err) return console.error(err.message); 
-        });
+        db.query(sqlQuery, newRecord, incrementPostLikeCount);
+    }
+
+    function incrementPostLikeCount(err, result) {
+        if (err) console.error(err.message);
+        // TO DO: Eventually make it so page doesn't reload after liking
         res.redirect('/');
-    });
+    }
 });
 
 router.post('/postunliked', (req, res, next) => {
+    let newRecord = [req.body.postID, req.session.user.id];
+    let sqlQuery = `CALL pr_deletepostlike(?,?);`; // Delete post_like row procedure
     // Delete row in relationship table between post unliked and liker
-    let sqlQuery = `DELETE FROM post_like
-                    WHERE post_id = ${req.body.postID} 
-                    AND user_id = ${req.session.user.id}`;
-    db.query(sqlQuery, (err, result) => {
-        if (err) return console.error(err.message);
+    db.query(sqlQuery, newRecord, deletePostLike);
+
+    function deletePostLike(err, result) {
+        if (err) { // Handle MySQL Errors
+            res.redirect('/');
+            return console.error(err.message); 
+        }
+        let newRecord = [req.body.postID];
+        let sqlQuery = `CALL pr_decrementpostlikes(?);`; // Update post like_count procedure
         // Decrement unliked post's like counter by 1
-        let sqlQuery = `UPDATE post
-                        SET like_count = like_count - 1
-                        WHERE post_id = ${req.body.postID}`;
-        db.query(sqlQuery, (err, result) => {
-            if (err) return console.error(err.message); 
-        });
+        db.query(sqlQuery, newRecord, decrementPostLikeCount)
+    }
+
+    function decrementPostLikeCount(err, result) {
+        if (err) console.error(err.message);
+        // TO DO: Eventually make it so page doesn't reload after liking
         res.redirect('/');
-    });
+    }
 });
 
 // Export the router so index.js can access it

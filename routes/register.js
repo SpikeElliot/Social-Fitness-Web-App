@@ -1,4 +1,3 @@
-// REQUIRED MODULES AND VARIABLES
 const express = require('express');
 const bcrypt = require('bcrypt'); // Bcrypt module for hashing passwords
 const saltRounds = 10; // Number of rounds for hash salting function
@@ -13,36 +12,37 @@ router.get('/register', redirectHome, (req, res, next) => {
 
 // Create validation chains for register page fields
 registerValidation = [check('email').isEmail().isLength({max: 255}).normalizeEmail(), 
-                    check('username').escape().isLength({min: 3, max: 64}).matches("^[a-zA-Z_.'-]+$"),
-                    check('password').escape().isLength({min: 8, max: 255}),
-                    check('firstname').escape().isLength({min: 1, max: 255}).trim(),
-                    check('lastname').escape().isLength({min: 1, max: 255}).trim()];
+                      check('username').escape().isLength({min: 3, max: 64}).matches("^[a-zA-Z_.'-]+$"),
+                      check('password').escape().isLength({min: 8, max: 255}),
+                      check('firstname').escape().isLength({min: 1, max: 255}).trim(),
+                      check('lastname').escape().isLength({min: 1, max: 255}).trim()];
 
 router.post('/registered', registerValidation, (req, res, next) => {
-    // Check validation of fields
     const errors = validationResult(req);
-    if (!errors.isEmpty()) { // Reload the page if any field has an error
-        res.redirect('/register');
-        return;
+    if (!errors.isEmpty()) { // Error handling for field registration
+        // TO DO: Add error message
+        return res.redirect('/register');
     }
-    // Save new user data in database
     const plainPassword = req.body.password;
     // Encrypt user's password using bcrypt hashing algorithm
-    bcrypt.hash(plainPassword, saltRounds, (err, hashedPassword) => {
-        let sqlQuery = `INSERT INTO user
-                        (username, hashed_password, firstname, lastname, email) 
-                        VALUES (?,?,?,?,?)`;
-        // Create record for query
-        let newrecord = [req.body.username, hashedPassword, req.body.firstname,
-                        req.body.lastname, req.body.email];
-        db.query(sqlQuery, newrecord, (err, result) => { // Execute sql query
-            if (err) { // Error handling
-                next(err);
-                return;
-            }
-            res.redirect('/login'); // Send user to login page if no errors
-        });
-    });                                                              
+    bcrypt.hash(plainPassword, saltRounds, encryptPassword);
+    
+    function encryptPassword(err, hashedPassword) {
+        let newRecord = [req.body.username, hashedPassword, req.body.firstname,
+            req.body.lastname, req.body.email];
+        let sqlQuery = `CALL pr_registeruser(?,?,?,?,?);`; // Insert user data procedure
+        // Add new user to database
+        db.query(sqlQuery, newRecord, registerUser);   
+    }
+
+    function registerUser(err, result) {
+        if (err) { // Handle MySQL Errors
+            res.redirect('/register');
+            return console.error(err.message);
+        }
+        // Case: No database errors
+        res.redirect('/login'); // Send user to login page
+    }
 });
 
 // Export the router so index.js can access it
