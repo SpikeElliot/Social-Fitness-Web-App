@@ -3,7 +3,7 @@
     <head>
         <title><%=appData.appName%></title>
         <link rel="stylesheet" type="text/css" href="/main.css"/>
-        <script src="script.js"></script> 
+        <script src="/script.js"></script> 
     </head>
     <body>
         <h1><a href="/"><%=appData.appName%></a></h1>
@@ -14,8 +14,8 @@
         </form>
         <h2>Tell us your thoughts or share an achievement!</h2>
         <form method="POST" action="/posted">
-            <textarea id="postTextBox" type="text" name="content" onkeyup="displayPostCharCount()" placeholder="Type something..." maxlength="255" rows="8" cols="60"></textarea>
-            <p id="postCharCount"></p>
+            <textarea class="postTextBox" type="text" name="content" onkeyup="displayTypingCharCount()" placeholder="Type something..." maxlength="255" rows="8" cols="60"></textarea>
+            <p class="postCharCount"></p>
             <input type="hidden" name="userid" value=<%=user.id%>>
             <input type="submit" value="Post"/>
         </form>

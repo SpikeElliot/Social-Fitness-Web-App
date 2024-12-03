@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+    <head>
+        <!-- Conditional for checking post has been found -->
+        <% let title = ""; %>
+        <% if (errMsg == null) {title = `Post by: ${post.username}`} else {title = 'Post Not Found';}%>
+        <% title += ` - ${appData.appName}`; %>
+        <title><%=title%></title>
+        <link rel="stylesheet" type="text/css" href="../main.css"/>
+        <script src="../script.js"></script> 
+    </head>
+    <body>
+        <h1><a href="/"><%=appData.appName%></a></h1>
+        <!-- Another check that post exists to prevent errors -->
+        <% if (errMsg == null) { %>
+        <!-- Display post info on page -->
+        <h2><a href=/profile/<%=post.username%>><%=post.username%></a></h2>
+        <p><%=post.body%></p>
+        <p>Likes: <%=post.like_count%></p>
+        <p><%=post.date_posted.toLocaleString()%></p>
+        <% if (post.is_liked) { %>
+            <form method="POST" action="postunliked">
+                <input type="hidden" name="postID" value="<%=post.post_id%>"/>
+                <input type="submit" value="Unlike"/>
+            </form>
+        <% } else { %>
+            <form method="POST" action="postliked">
+                <input type="hidden" name="postID" value="<%=post.post_id%>"/>
+                <input type="submit" value="Like"/>
+            </form>
+        <% } %>
+        <h2>Leave a comment:</h2>
+        <form method="POST" action="/commented">
+            <textarea class="postTextBox" type="text" name="content" onkeyup="displayTypingCharCount()" placeholder="Type something..." maxlength="255" rows="8" cols="60"></textarea>
+            <p class="postCharCount"></p>
+            <input type="hidden" name="user_id" value=<%=user.id%>>
+            <input type="hidden" name="post_id" value=<%=post.post_id%>>
+            <input type="submit" value="Post"/>
+        </form>
+        <% } else { %>
+            <p><%=errMsg%></p>
+        <% } %>
+    </body>
+</html>

@@ -89,5 +89,9 @@ app.use(('/profile', profileRoutes));
 const searchRoutes = require('./routes/search');
 app.use(('/search', searchRoutes));
 
+// Post routes
+const postRoutes = require('./routes/post');
+app.use(('/post', postRoutes));
+
 // Start the web app listening
 app.listen(port, () => console.log(`Node app listening on port: ${port}`));
