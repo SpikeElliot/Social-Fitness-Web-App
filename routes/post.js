@@ -25,6 +25,19 @@ router.get('/post/:id', redirectLogin, (req, res, next) => {
         // Case: Matching post ID found
         newData.user = req.session.user; // Update newData object with post data
         newData.post = result[0][0];
+        newRecord = [newData.post.post_id, newData.user.id];
+        sqlQuery = `CALL pr_postcomments(?,?);`; // Get all post comments procedure
+        // Query database for comments matching post's post_id
+        db.query(sqlQuery, newRecord, getComments);  
+    }
+
+    function getComments(err, result) {
+        if (err) { // Handle MySQL Errors
+            console.error(err.message);
+            return res.redirect('/');
+        }
+        // Update newData object with comments, render post page
+        newData.comments = result[0];
         res.render('post.ejs', newData);
     }
 });

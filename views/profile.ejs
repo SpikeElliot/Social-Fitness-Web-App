@@ -12,8 +12,10 @@
     <body>
         <h1><a href="/"><%=appData.appName%></a></h1>
         <!-- Another check that user profile exists to prevent errors -->
-        <% if (errMsg == null) { %>
-        <h2><%=profile.username%></h2>
+        <% if (errMsg != null) { %>
+            <p><%=errMsg%></p>
+        <% } else { %>
+        <h2><a href=/profile/<%=profile.username%>><%=profile.username%></a></h2>
         <p>Followers: <%=profile.follower_count%></p>
         <p>Following: <%=profile.following_count%></p>
         <!-- Conditionals for when user's country or city are null in database -->
@@ -34,30 +36,30 @@
         <p>Date joined: <%=profile.date_joined.toLocaleString()%></p>
         <ul>
             <!-- For loop iterates through posts array -->
-            <% for (let i = 0; i < posts.length; i++) { %>
-            <!-- Display post info on page -->
-            <% p = posts[i]; %>
-            <li>
-                <h2><a href=/profile/<%=profile.username%>><%=profile.username%></a></h2>
-                <p><%=p.body%></p>
-                <p>Likes: <%=p.like_count%></p>
-                <p><%=p.date_posted.toLocaleString()%></p>
-                <% if (p.is_liked) { %>
-                    <form method="POST" action="postunliked">
+            <% for (p of posts) { %>
+                <!-- Display post info on page -->
+                <li>
+                    <h2><a href=/profile/<%=profile.username%>><%=profile.username%></a></h2>
+                    <p><%=p.body%></p>
+                    <p>Likes: <%=p.like_count%></p>
+                    <p><%=p.date_posted.toLocaleString()%></p>
+                    <% let postAction; %>
+                    <% let postValue; %>
+                    <!-- Conditional for whether to show like or unlike button -->
+                    <% if (p.is_liked) { %>
+                        <% postAction = "postunliked"; %>
+                        <% postValue = "Unlike"; %>
+                    <% } else { %>
+                        <% postAction = "postliked"; %>
+                        <% postValue = "Like"; %>
+                    <% } %>
+                    <form method="POST" action=<%=postAction%>>
                         <input type="hidden" name="postID" value="<%=p.post_id%>"/>
-                        <input type="submit" value="Unlike"/>
+                        <input type="submit" value="<%=postValue%>"/>
                     </form>
-                <% } else { %>
-                    <form method="POST" action="postliked">
-                        <input type="hidden" name="postID" value="<%=p.post_id%>"/>
-                        <input type="submit" value="Like"/>
-                    </form>
-                <% } %>
-            </li>
+                </li>
             <% } %>
         </ul>
-        <% } else { %>
-            <p><%=errMsg%></p>
         <% } %>
     </body>
 </html>

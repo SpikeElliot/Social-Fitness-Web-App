@@ -27,25 +27,27 @@
         <% if (posts) { %>
         <ul>
             <!-- For loop iterates through posts array -->
-            <% for (let i = 0; i < posts.length; i++) { %>
+            <% for (p of posts) { %>
             <!-- Display post info on page -->
-            <% p = posts[i]; %>
             <li>
                 <h2><a href=/profile/<%=p.username%>><%=p.username%></a></h2>
                 <p><%=p.body%></p>
                 <p>Likes: <%=p.like_count%></p>
                 <p><%=p.date_posted.toLocaleString()%></p>
+                <% let postAction; %>
+                <% let postValue; %>
+                <!-- Conditional for whether to show like or unlike button -->
                 <% if (p.is_liked) { %>
-                    <form method="POST" action="postunliked">
-                        <input type="hidden" name="postID" value="<%=p.post_id%>"/>
-                        <input type="submit" value="Unlike"/>
-                    </form>
+                    <% postAction = "postunliked"; %>
+                    <% postValue = "Unlike"; %>
                 <% } else { %>
-                    <form method="POST" action="postliked">
-                        <input type="hidden" name="postID" value="<%=p.post_id%>"/>
-                        <input type="submit" value="Like"/>
-                    </form>
+                    <% postAction = "postliked"; %>
+                    <% postValue = "Like"; %>
                 <% } %>
+                <form method="POST" action=<%=postAction%>>
+                    <input type="hidden" name="postID" value="<%=p.post_id%>"/>
+                    <input type="submit" value="<%=postValue%>"/>
+                </form>
             </li>
             <% } %>
         </ul>

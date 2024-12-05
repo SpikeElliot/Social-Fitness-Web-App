@@ -16,9 +16,10 @@ p,li,a {
 
 a {
     text-decoration: none;
+    color: rgb(85, 120, 224);
 }
   
-a:visited, a:hover, a:active {
+a:hover, a:active {
     text-decoration: none;
     color: rgb(0, 0, 0);
 }
