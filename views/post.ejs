@@ -28,10 +28,10 @@
         <% let postValue; %>
         <!-- Conditional for whether to show like or unlike button -->
         <% if (post.is_liked) { %>
-            <% postAction = "postunliked"; %>
+            <% postAction = "/postunliked"; %>
             <% postValue = "Unlike"; %>
         <% } else { %>
-            <% postAction = "postliked"; %>
+            <% postAction = "/postliked"; %>
             <% postValue = "Like"; %>
         <% } %>
         <form method="POST" action=<%=postAction%>>
@@ -56,10 +56,10 @@
                 <% let commentValue; %>
                 <!-- Conditional for whether to show like or unlike button -->
                 <% if (c.is_liked) { %>
-                    <% commentAction = "commentunliked"; %>
+                    <% commentAction = "/commentunliked"; %>
                     <% commentValue = "Unlike"; %>
                 <% } else { %>
-                    <% commentAction = "commentliked"; %>
+                    <% commentAction = "/commentliked"; %>
                     <% commentValue = "Like"; %>
                 <% } %>
                 <form method="POST" action="<%=commentAction%>">

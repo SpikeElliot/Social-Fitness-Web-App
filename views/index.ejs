@@ -6,51 +6,61 @@
         <script src="/script.js"></script> 
     </head>
     <body>
-        <h1><a href="/"><%=appData.appName%></a></h1>
+        <a href="/">
+            <div class="header">
+                <h1><%=appData.appName%></h1>
+            </div>
+        </a>
         <!-- Search box -->
-        <form method="GET" action="/search">
-            <input id="searchBox" type="text" name="searchtext" placeholder="Search for something...">
-            <input type="submit" value="Search">
-        </form>
-        <h2>Tell us your thoughts or share an achievement!</h2>
-        <form method="POST" action="/posted">
-            <textarea class="postTextBox" type="text" name="content" onkeyup="displayTypingCharCount()" placeholder="Type something..." maxlength="255" rows="8" cols="60"></textarea>
-            <p class="postCharCount"></p>
-            <input type="hidden" name="userid" value=<%=user.id%>>
-            <input type="submit" value="Post"/>
-        </form>
+        <div class="searchbar">
+            <form method="GET" action="/search">
+                <input id="searchBox" type="text" name="searchtext" placeholder="Search for something...">
+                <input type="submit" value="Search">
+            </form>
+        </div>
+        <div class="postformdiv">
+            <h2>Tell us your thoughts or share an achievement!</h2>
+            <form method="POST" action="/posted">
+                <textarea class="postTextBox" type="text" name="content" onkeyup="displayTypingCharCount()" placeholder="Type something..." maxlength="255" rows="8" cols="60"></textarea>
+                <p class="postCharCount"></p>
+                <input type="hidden" name="userid" value=<%=user.id%>>
+                <input type="submit" value="Post"/>
+            </form>
+        </div>
         <br>
-        <p><a href="/profile/<%=user.username%>">Your Profile</a></p>
-        <p><a href="/activities">Your Activities</a></p>
-        <p><a href="/likedposts">Your Liked Posts</a></p>
-        <p><a href="/about">About Us</a></p>
+        <div class="navbar">
+            <a href="/profile/<%=user.username%>">Your Profile</a>
+            <a href="/activities">Your Activities</a>
+            <a href="/likedposts">Your Liked Posts</a>
+            <a href="/about">About Us</a>
+        </div>
         <% if (posts) { %>
-        <ul>
             <!-- For loop iterates through posts array -->
             <% for (p of posts) { %>
             <!-- Display post info on page -->
-            <li>
-                <h2><a href=/profile/<%=p.username%>><%=p.username%></a></h2>
-                <p><%=p.body%></p>
-                <p>Likes: <%=p.like_count%></p>
-                <p><%=p.date_posted.toLocaleString()%></p>
-                <% let postAction; %>
-                <% let postValue; %>
-                <!-- Conditional for whether to show like or unlike button -->
-                <% if (p.is_liked) { %>
-                    <% postAction = "postunliked"; %>
-                    <% postValue = "Unlike"; %>
-                <% } else { %>
-                    <% postAction = "postliked"; %>
-                    <% postValue = "Like"; %>
-                <% } %>
-                <form method="POST" action=<%=postAction%>>
-                    <input type="hidden" name="postID" value="<%=p.post_id%>"/>
-                    <input type="submit" value="<%=postValue%>"/>
-                </form>
-            </li>
+            <a href="/post/<%=p.post_id%>">
+                <div class="postdiv">
+                    <h2><%=p.username%></h2>
+                    <p><%=p.body%></p>
+                    <p>Likes: <%=p.like_count%></p>
+                    <p><%=p.date_posted.toLocaleString()%></p>
+                    <% let postAction; %>
+                    <% let postValue; %>
+                    <!-- Conditional for whether to show like or unlike button -->
+                    <% if (p.is_liked) { %>
+                        <% postAction = "/postunliked"; %>
+                        <% postValue = "Unlike"; %>
+                    <% } else { %>
+                        <% postAction = "/postliked"; %>
+                        <% postValue = "Like"; %>
+                    <% } %>
+                    <form method="POST" action=<%=postAction%>>
+                        <input type="hidden" name="postID" value="<%=p.post_id%>"/>
+                        <input type="submit" value="<%=postValue%>"/>
+                    </form>
+                </div>
+            </a>
             <% } %>
-        </ul>
         <% } %>
     </body>
 </html>

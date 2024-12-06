@@ -31,55 +31,5 @@ router.get('/search', searchValidation, redirectLogin, (req, res, next) => {
     }
 });
 
-// TO DO: Probably move these to their own '/post' route
-
-router.post('/postliked', (req, res, next) => {
-    let newRecord = [req.body.postID, req.session.user.id];
-    let sqlQuery = `CALL pr_makepostlike(?,?);`; // Insert user IDs into post_like procedure
-    // Create new row in relationship table between post liked and liker
-    db.query(sqlQuery, newRecord, newPostLike);
-
-    function newPostLike(err, result) {
-        if (err) { // Handle MySQL Errors
-            res.redirect('/');
-            return console.error(err.message); 
-        }
-        let newRecord = [req.body.postID];
-        let sqlQuery = `CALL pr_incrementpostlikes(?);`; // Update post like_count procedure
-        // Increment liked post's like counter by 1
-        db.query(sqlQuery, newRecord, incrementPostLikeCount);
-    }
-
-    function incrementPostLikeCount(err, result) {
-        if (err) console.error(err.message);
-        // TO DO: Eventually make it so page doesn't reload after liking
-        res.redirect('/');
-    }
-});
-
-router.post('/postunliked', (req, res, next) => {
-    let newRecord = [req.body.postID, req.session.user.id];
-    let sqlQuery = `CALL pr_deletepostlike(?,?);`; // Delete post_like row procedure
-    // Delete row in relationship table between post unliked and liker
-    db.query(sqlQuery, newRecord, deletePostLike);
-
-    function deletePostLike(err, result) {
-        if (err) { // Handle MySQL Errors
-            res.redirect('/');
-            return console.error(err.message); 
-        }
-        let newRecord = [req.body.postID];
-        let sqlQuery = `CALL pr_decrementpostlikes(?);`; // Update post like_count procedure
-        // Decrement unliked post's like counter by 1
-        db.query(sqlQuery, newRecord, decrementPostLikeCount)
-    }
-
-    function decrementPostLikeCount(err, result) {
-        if (err) console.error(err.message);
-        // TO DO: Eventually make it so page doesn't reload after liking
-        res.redirect('/');
-    }
-});
-
 // Export the router so index.js can access it
 module.exports = router;

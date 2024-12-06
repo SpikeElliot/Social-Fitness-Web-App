@@ -60,7 +60,103 @@ router.post('/commented', commentValidation, (req, res, next) => {
         if (err) return console.error(err.message); // Handle MySQL Errors
         res.redirect(`post/${req.body.post_id}`);
     }
-})
+});
+
+router.post('/postliked', (req, res, next) => {
+    let newRecord = [req.body.postID, req.session.user.id];
+    let sqlQuery = `CALL pr_makepostlike(?,?);`; // Insert user IDs into post_like procedure
+    // Create new row in relationship table between post liked and liker
+    db.query(sqlQuery, newRecord, newPostLike);
+
+    function newPostLike(err, result) {
+        if (err) { // Handle MySQL Errors
+            res.redirect('/');
+            return console.error(err.message); 
+        }
+        let newRecord = [req.body.postID];
+        let sqlQuery = `CALL pr_incrementpostlikes(?);`; // Update post like_count procedure
+        // Increment liked post's like counter by 1
+        db.query(sqlQuery, newRecord, incrementPostLikeCount);
+    }
+
+    function incrementPostLikeCount(err, result) {
+        if (err) console.error(err.message);
+        // TO DO: Eventually make it so page doesn't reload after liking
+        res.redirect('/');
+    }
+});
+
+router.post('/postunliked', (req, res, next) => {
+    let newRecord = [req.body.postID, req.session.user.id];
+    let sqlQuery = `CALL pr_deletepostlike(?,?);`; // Delete post_like row procedure
+    // Delete row in relationship table between post unliked and liker
+    db.query(sqlQuery, newRecord, deletePostLike);
+
+    function deletePostLike(err, result) {
+        if (err) { // Handle MySQL Errors
+            res.redirect('/');
+            return console.error(err.message); 
+        }
+        let newRecord = [req.body.postID];
+        let sqlQuery = `CALL pr_decrementpostlikes(?);`; // Update post like_count procedure
+        // Decrement unliked post's like counter by 1
+        db.query(sqlQuery, newRecord, decrementPostLikeCount)
+    }
+
+    function decrementPostLikeCount(err, result) {
+        if (err) console.error(err.message);
+        // TO DO: Eventually make it so page doesn't reload after liking
+        res.redirect('/');
+    }
+});
+
+router.post('/commentliked', (req, res, next) => {
+    let newRecord = [req.body.commentID, req.session.user.id];
+    let sqlQuery = `CALL pr_makecommentlike(?,?);`; // Insert IDs into comment_like procedure
+    // Create new row in relationship table between comment liked and liker
+    db.query(sqlQuery, newRecord, newCommentLike);
+
+    function newCommentLike(err, result) {
+        if (err) { // Handle MySQL Errors
+            res.redirect('/');
+            return console.error(err.message); 
+        }
+        let newRecord = [req.body.commentID];
+        let sqlQuery = `CALL pr_incrementcommentlikes(?);`; // Update comment like_count procedure
+        // Increment liked comment's like counter by 1
+        db.query(sqlQuery, newRecord, incrementCommentLikeCount);
+    }
+
+    function incrementCommentLikeCount(err, result) {
+        if (err) console.error(err.message);
+        // TO DO: Eventually make it so page doesn't reload after liking
+        res.redirect('/');
+    }
+});
+
+router.post('/commentunliked', (req, res, next) => {
+    let newRecord = [req.body.commentID, req.session.user.id];
+    let sqlQuery = `CALL pr_deletecommentlike(?,?);`; // Delete comment_like row procedure
+    // Delete row in relationship table between comment unliked and liker
+    db.query(sqlQuery, newRecord, deleteCommentLike);
+
+    function deleteCommentLike(err, result) {
+        if (err) { // Handle MySQL Errors
+            res.redirect('/');
+            return console.error(err.message); 
+        }
+        let newRecord = [req.body.commentID];
+        let sqlQuery = `CALL pr_decrementcommentlikes(?);`; // Update comment like_count procedure
+        // Decrement unliked comment's like counter by 1
+        db.query(sqlQuery, newRecord, decrementCommentLikeCount)
+    }
+
+    function decrementCommentLikeCount(err, result) {
+        if (err) console.error(err.message);
+        // TO DO: Eventually make it so page doesn't reload after liking
+        res.redirect('/');
+    }
+});
 
 // Export the router so index.js can access it
 module.exports = router;
