@@ -13,9 +13,9 @@ const port = 8000;
 app.set('view engine', 'ejs');
 
 // Set up body-parser
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({extended: true}));
 
-// Set up public folder (contains css and static js)
+// Set up public folder (contains css, static js, and assets)
 app.use(express.static(__dirname + '/public'));
 
 // Define application-specific data

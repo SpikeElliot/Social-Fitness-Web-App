@@ -4,6 +4,11 @@ function displayTypingCharCount() {
 
     for (let i = 0; i < textBoxes.length; i++) {
         charsLeft = 255 - textBoxes[i].value.length;
-        charDisplays[i].innerHTML = `${charsLeft}/255 characters left`;
+        if (charsLeft <= 30) {
+            charDisplays[i].style.display = "block";
+            charDisplays[i].innerHTML = `${charsLeft} characters left`;
+        } else {
+            charDisplays[i].style.display = "none";
+        }
     }
 }

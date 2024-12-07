@@ -1,110 +1,218 @@
+/* Remove margin from body */
+
 body {
-    margin-top: 0; 
+    margin: 0; 
 }
 
-h1 {
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 40px;
+/* Footer styling */
+
+footer {
+    margin-top: 50px;
+    text-align: center;
+}
+
+/* Colour scheme (temporary) */
+
+h1, h2, a {
     color: rgb(85, 120, 224);
 }
 
-h2 {
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 20px;
-    color: rgb(85, 120, 224);
-}
-
-p,li,a {
-    font-family: Arial, Helvetica, sans-serif;
-}
-
-a {
-    text-decoration: none;
-    color: rgb(85, 120, 224);
-}
-  
-a:hover, a:active {
-    text-decoration: none;
-    color: rgb(0, 0, 0);
-}
-
-.navbar {
-    position: fixed;
-    width: 10%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    z-index: 1;
-    background-color:#F1F1F1;
-    overflow-x: hidden;
-    padding: 20px;
-}
-
-.navbar a {
-    padding-top: 10%;
-    padding-bottom: 10%;
-    font-size: 20px;
-    color: rgb(85, 120, 224);
-    display: block;
-}
-
-.postdiv {
-    width: 50%;
-    border: 15px;
-    border-radius: 15px;
-    padding: 20px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 20px;
-    background-color:#F1F1F1;
-}
-
-.postdiv p {
+a:hover, a:active, textarea, input {
     color: black;
 }
 
-.header {
-    background-color: #F1F1F1;
-    text-align: center;
+/* Font families and sizes */
+
+h1, h2, p, li, a, textarea, input {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+h1 {
+    font-size: 40px;
+}
+
+h2 {
+    font-size: 20px;
+}
+
+/* Remove decoration from links */
+
+a, a:hover, a:active {
+    text-decoration: none;
+}
+
+/* Header w/ search bar styling */
+
+.headerContainer {
+    /* position: sticky; */
+    z-index: 1;
+    width: 100%;
+    top: 0;
     padding-top: 20px;
-    margin-bottom: 0;
+    padding-bottom: 20px;
+    margin: 0 auto;
+    background-color: #F1F1F1;
+}
+
+.header {
+    width: 50%;
+    margin: auto;
 }
 
 .header h1 {
+    display: inline-block;
+    width: max-content;
     margin: 0 auto;
+    transition: color 250ms;
+}
+
+.header h1:hover {
+    color: rgb(58, 88, 177);
 }
 
 .searchbar {
-    position: sticky;
-    top: 0;
-    padding: 20px;
-    width: 100%;
-    background-color: #F1F1F1;
-    text-align: center;
-    margin: 0 auto;
+    float: right;
+    width: 80%;
+    margin-top: 7px;
+}
+
+.searchbar input {
+    height: max-content;
+    padding: 10px;
+    border: none;
+    border-radius: 20px;
+    font-size: 16px;
 }
 
 .searchbar input[type=text] {
-    width: 50%;
-    padding: 10px;
-    border-radius: 10px;
+    display: inline-block;
+    width: 73%;
+    padding: 10px 20px;
     background-color: white;
-    border: none;
-    margin-right: 10px;
 }
 
 .searchbar input[type=submit] {
-    width: 5%;
-    padding: 10px;
-    border-radius: 10px;
+    float: right;
+    width: 15%;
     background-color: rgb(85, 120, 224);
-    color:white;
-    border: none;
+    transition: background-color 250ms;
+    color: white;
 }
 
-.postformdiv {
-    padding: 20px;
+.searchbar input[type=submit]:hover {
+    background-color: rgb(58, 88, 177);
+}
+
+/* Side navigation bar styling */
+
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    width: 10%;
+    height: 100%;
+    padding-top: 150px;
+    background-color: rgb(85, 120, 224);
+    overflow-x: hidden;
+}
+
+.navbar a {
+    display: block;
+    width: 100%;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    font-size: 20px;
+    text-indent: 20px;
+    color: white;
+    transition: background-color 250ms;
+}
+
+.navbar a:hover {
+    background-color: rgb(58, 88, 177);
+}
+
+/* Post styling */
+
+.postContainer {
     width: 50%;
     margin-left: auto;
     margin-right: auto;
+}
+
+.postDiv {
+    position: relative;
+    right: 15px;
+    width: 100%;
+    padding: 15px;
+    border: 15px;
+    border-radius: 15px;
+    margin-top: 30px;
+    background-color:#F1F1F1;
+}
+
+.postDiv h2 {
+    margin: 10px 10px 20px 10px;
+}
+
+.postDiv div {
+    color: black;
+}
+
+.postBodyDiv {
+    margin: 10px;
+    word-wrap: break-word;
+}
+
+.postLikeButton {
+    display: inline-block;
+    margin: 10px 2px 10px 10px;
+}
+
+.postLikeImg {
+    position: relative;
+    top: 1px;
+    width: 16px;
+    height: auto;
+}
+
+.postLikesDiv {
+    display:inline-block;
+}
+
+.postDateDiv {
+    float: right;
+    margin: 10px;
+}
+
+/* Make post form styling */
+
+.postFormDiv {
+    width: 50%;
+    padding-top: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+}
+
+.postTextBox {
+    position: relative;
+    right: 15px;
+    width: 100%;
+    height: 100px;
+    padding: 15px;
+    border: none;
+    border-radius: 15px;
+    background-color: #F1F1F1;
+    resize: none;
+}
+
+.postFormDiv input[type=submit] {
+    margin-top: 20px;
+}
+
+.postCharCount {
+    display: none;
+    margin-top: 20px;
+    margin-bottom: 0;
 }
