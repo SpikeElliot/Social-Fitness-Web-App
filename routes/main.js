@@ -20,8 +20,8 @@ router.get('/', redirectLogin, (req, res, next) => {
     }
 });
 
-// Create sanitisation and validation chain for post form
-const postValidation = [body('content').escape().trim().notEmpty()];
+// Create validation chain for post form
+const postValidation = [body('content').trim().notEmpty().isLength({max: 255})];
 
 router.post('/posted', postValidation, (req, res, next) => {
     const errors = validationResult(req);
@@ -38,6 +38,11 @@ router.post('/posted', postValidation, (req, res, next) => {
         if (err) return console.error(err.message); // Handle MySQL Errors
         res.redirect('/');
     }
+});
+
+router.get('/logout', (req, res, next) => {
+    req.session.destroy();
+    res.redirect('/login');
 });
 
 // Export the router so index.js can access it

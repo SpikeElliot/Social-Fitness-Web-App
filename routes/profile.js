@@ -5,7 +5,7 @@ const router = express.Router(); // Create a router object
 
 router.get('/profile/:username', redirectLogin, (req, res, next) => {
     let newData = {}; // Create newData object for profile data to use in EJS
-    newData.errMsg = null; // Initialise error message as null
+    newData.error = false; // Initialise error (when no result found) as false
     let newRecord = [req.params.username];
     let sqlQuery = `CALL pr_profileinfo(?);`; // Get user profile info procedure
     db.query(sqlQuery, newRecord, getProfileInfo); // Start query chain
@@ -18,7 +18,7 @@ router.get('/profile/:username', redirectLogin, (req, res, next) => {
         }
         // Case: No matching username found (User does not exist)
         if (result[0].length == 0) { 
-            newData.errMsg = 'User not found'; // Set error message for EJS
+            newData.error = true;
             return res.render('profile.ejs', newData);
         }
         // Case: Matching username found

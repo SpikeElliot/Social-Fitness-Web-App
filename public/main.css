@@ -13,17 +13,21 @@ footer {
 
 /* Colour scheme (temporary) */
 
-h1, h2, a {
+h1, h2, a, div {
     color: rgb(85, 120, 224);
 }
 
-a:hover, a:active, textarea, input {
+textarea, input {
     color: black;
+}
+
+a:hover, a:active {
+    color: rgb(58, 88, 177)
 }
 
 /* Font families and sizes */
 
-h1, h2, p, li, a, textarea, input {
+h1, h2, p, li, a, textarea, input, div {
     font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -35,19 +39,25 @@ h2 {
     font-size: 20px;
 }
 
+h3 {
+    font-size: 16px;
+}
+
 /* Remove decoration from links */
 
 a, a:hover, a:active {
     text-decoration: none;
 }
 
-/* Header w/ search bar styling */
+/* Header styling */
 
 .headerContainer {
-    /* position: sticky; */
-    z-index: 1;
-    width: 100%;
+    /*
+    position: sticky; 
+    z-index: 1; 
     top: 0;
+    */
+    width: 100%;
     padding-top: 20px;
     padding-bottom: 20px;
     margin: 0 auto;
@@ -55,8 +65,11 @@ a, a:hover, a:active {
 }
 
 .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     width: 50%;
-    margin: auto;
+    margin-left: 25%;
 }
 
 .header h1 {
@@ -70,33 +83,91 @@ a, a:hover, a:active {
     color: rgb(58, 88, 177);
 }
 
-.searchbar {
+/* Header dropdown menu styling */
+
+.headerDropdown {
+    position: absolute;
+    right: 0;
+    top: 0;
     float: right;
+    width: 10%;
+    height: 86.4px;
+    text-align: center;
+}
+
+.headerDropdownButton {
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+    border: none;
+    background-color: rgb(85, 120, 224);
+    transition: background-color 250ms;
+    color: white;
+    font-size: 20px;
+    word-wrap: break-word;
+}
+
+.headerDropdown:hover .headerDropdownMenu {
+    display: block;
+}
+
+.headerDropdown:hover .headerDropdownButton {
+    background-color: rgb(58, 88, 177);
+}
+
+.headerDropdownMenu {
+    display: none;
+    position: absolute;
+    z-index: 1;
+    width: 100%;
+    box-shadow: 0px 4px 16px 0px rgba(0,0,0,0.2);
+    background-color: #F1F1F1;
+}
+  
+.headerDropdownMenu a {
+    display: block;
+    padding: 20px 10px;
+    color: black;
+    font-size: 16px;
+}
+  
+.headerDropdownMenu a:hover {
+    background-color: #DDDDDD;
+}
+
+/* Header search bar styling */
+
+.searchbar {
     width: 80%;
-    margin-top: 7px;
 }
 
 .searchbar input {
     height: max-content;
     padding: 10px;
     border: none;
-    border-radius: 20px;
     font-size: 16px;
 }
 
 .searchbar input[type=text] {
     display: inline-block;
-    width: 73%;
-    padding: 10px 20px;
+    width: 75%;
+    padding: 10px 20px 10px 40px;
+    border-radius: 20px 0 0 20px;
+    z-index: 1;
+    background: url(/assets/search.png) no-repeat scroll 14px 11px;
+    background-size: 16px 16px;
     background-color: white;
 }
 
 .searchbar input[type=submit] {
     float: right;
-    width: 15%;
+    width: calc(25% - 60px);
+    border-radius: 0 20px 20px 0;
+    z-index: 2;
     background-color: rgb(85, 120, 224);
     transition: background-color 250ms;
     color: white;
+    text-indent: -4px;
 }
 
 .searchbar input[type=submit]:hover {
@@ -193,6 +264,8 @@ a, a:hover, a:active {
     margin-left: auto;
     margin-right: auto;
     margin-top: 20px;
+    padding-bottom: 20px;
+    border-bottom: 20px;
 }
 
 .postTextBox {
@@ -208,11 +281,33 @@ a, a:hover, a:active {
 }
 
 .postFormDiv input[type=submit] {
+    position: relative;
+    left: -15px;
+    width: 13%;
+    height: max-content;
+    padding: 10px;
+    border: none;
+    border-radius: 20px;
     margin-top: 20px;
+    background-color: rgb(85, 120, 224);
+    transition: background-color 250ms;
+    color: white;
+    font-size: 16px;
+}
+
+.postFormDiv input[type=submit]:hover {
+    background-color: rgb(58, 88, 177);
 }
 
 .postCharCount {
     display: none;
     margin-top: 20px;
     margin-bottom: 0;
+}
+
+.homePageDivider {
+    width: 53%;
+    height: 10px;
+    border-bottom: 2px solid rgb(85, 120, 224);
+    margin: 0 auto;
 }

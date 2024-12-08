@@ -2,8 +2,12 @@
 <html>
     <head>
         <!-- Conditional for checking user profile has been found -->
-        <% let title = ""; %>
-        <% if (errMsg == null) {title = profile.username;} else {title = 'User Not Found';}%>
+        <% let title; %>
+        <% if (error) { %>
+            <% title = 'User Not Found';%>
+        <% } else { %>
+            <% title = `${profile.username}'s Profile`; %>
+        <% } %>
         <% title += ` - ${appData.appName}`; %>
         <title><%=title%></title>
         <link rel="stylesheet" type="text/css" href="../main.css"/>
@@ -12,8 +16,10 @@
     <body>
         <h1><a href="/"><%=appData.appName%></a></h1>
         <!-- Another check that user profile exists to prevent errors -->
-        <% if (errMsg != null) { %>
-            <p><%=errMsg%></p>
+        <% if (error) { %>
+            <p>User does not exist!</p>
+            <br>
+            <a href="/">Return Home</a>
         <% } else { %>
         <h2><a href=/profile/<%=profile.username%>><%=profile.username%></a></h2>
         <p>Followers: <%=profile.follower_count%></p>

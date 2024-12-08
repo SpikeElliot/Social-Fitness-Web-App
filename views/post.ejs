@@ -3,10 +3,10 @@
     <head>
         <!-- Conditional for checking post has been found -->
         <% let title; %>
-        <% if (errMsg == null) { %>
-            <% title = `Post by: ${post.username}`; %>
-        <% } else { %>
+        <% if (error) { %>
             <% title = 'Post Not Found';%>
+        <% } else { %>
+            <% title = `Post by: ${post.username}`; %>
         <% } %>
         <% title += ` - ${appData.appName}`; %>
         <title><%=title%></title>
@@ -16,8 +16,10 @@
     <body>
         <h1><a href="/"><%=appData.appName%></a></h1>
         <!-- Another check that post exists to prevent errors -->
-        <% if (errMsg != null) { %>
-            <p><%=errMsg%></p>
+        <% if (error) { %>
+            <p>This post has been deleted or never existed!</p>
+            <br>
+            <a href="/">Back Home</a>
         <% } else { %>
         <!-- Display post info on page -->
         <h2><a href="/profile/<%=post.username%>"><%=post.username%></a></h2>

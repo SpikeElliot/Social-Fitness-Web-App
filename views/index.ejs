@@ -2,7 +2,12 @@
 <html>
     <head>
         <title><%=appData.appName%></title>
+        <link rel="icon" type="image/x-icon" href="/assets/fitterlogo.png">
         <link rel="stylesheet" type="text/css" href="/main.css"/>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+                integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+                crossorigin="anonymous">
+        </script>
         <script src="/script.js"></script> 
     </head>
     <body>
@@ -10,10 +15,18 @@
         <div class="headerContainer">
             <div class="header">
                 <a href="/"><h1><%=appData.appName%></h1></a>
-                <form class="searchbar" method="GET" action="/search">
+                <form class="searchbar" method="GET" action="/search/posts">
                     <input id="searchBox" type="text" name="searchtext" placeholder="Search for posts, users, or activities...">
                     <input type="submit" value="Search">
                 </form>
+            </div>
+            <div class="headerDropdown">
+                <button class="headerDropdownButton"><%=user.username%></button>
+                <div class="headerDropdownMenu">
+                    <a href="/profile/<%=user.username%>">Your Profile</a>
+                    <a href="/settings">Account Settings</a>
+                    <a href="/logout">Log Out</a>
+                </div>
             </div>
         </div>
         <div class="postFormDiv">
@@ -22,13 +35,13 @@
                 <textarea class="postTextBox" type="text" name="content" onkeyup="displayTypingCharCount()" placeholder="What do you want to say?" maxlength="255"></textarea>
                 <p class="postCharCount"></p>
                 <input type="hidden" name="userid" value=<%=user.id%>>
-                <input type="submit" value="Post"/>
+                <input type="submit" value="Post">
             </form>
         </div>
-        <br>
+        <div class="homePageDivider"></div>
         <div class="navbar">
             <a href="/">Home</a>
-            <a href="/profile/<%=user.username%>">Your Profile</a>
+            <a href="/profile/<%=user.username%>">Profile</a>
             <a href="/activities">Activities</a>
             <a href="/likedposts">Liked Posts</a>
             <a href="/help">Help</a>
@@ -66,7 +79,8 @@
             <% } %>
         <% } %>
     <footer>
-        <p>Uicons by <a href="https://www.flaticon.com/uicons">Flaticon</a></p>
+        <p>Uicons by <a href="https://www.flaticon.com/uicons" title="Uicons">Flaticon</a></p>
+        <p>Fast icons created by <a href="https://www.flaticon.com/free-icons/fast" title="Fast icons">srip - Flaticon</a></p>
     </footer>
     </body>
 </html>

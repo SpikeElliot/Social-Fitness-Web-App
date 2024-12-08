@@ -7,7 +7,7 @@ const router = express.Router(); // Create a router object
 // Create sanitisation and validation chain for search box
 let searchValidation = [check('searchtext').escape().trim().notEmpty()];
 
-router.get('/search', searchValidation, redirectLogin, (req, res, next) => {
+router.get('/search/posts', searchValidation, redirectLogin, (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) { // Handle search validation errors
         // TO DO: Eventually add error message to give user without reloading page
@@ -25,7 +25,7 @@ router.get('/search', searchValidation, redirectLogin, (req, res, next) => {
                        searchtext: req.query.searchtext,
                        posts: result[0]};
         // Case: Matching post found
-        if (result) return res.render('postlist.ejs', newData);
+        if (result) return res.render('searchedposts.ejs', newData);
         // Case: No matching post found
         res.send('No posts found');
     }

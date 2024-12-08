@@ -6,7 +6,7 @@ const router = express.Router(); // Create a router object
 
 router.get('/post/:id', redirectLogin, (req, res, next) => {
     let newData = {}; // Create newData object for post data to use in EJS
-    newData.errMsg = null; // Initialise error message as null
+    newData.error = false; // Initialise error (when no result found) as false
     let newRecord = [req.params.id, req.session.user.id];
     let sqlQuery = `CALL pr_postinfo(?,?);`; // Get post data procedure
     // Get necessary post data for post matching ID parameter
@@ -19,7 +19,7 @@ router.get('/post/:id', redirectLogin, (req, res, next) => {
         }
         // Case: No matching post ID found
         if (result[0].length == 0) {
-            newData.errMsg = "This post has been deleted or never existed!";
+            newData.error = true;
             return res.render('post.ejs', newData);
         }
         // Case: Matching post ID found
@@ -42,8 +42,8 @@ router.get('/post/:id', redirectLogin, (req, res, next) => {
     }
 });
 
-// Create sanitisation and validation chain for comment field
-const commentValidation = [body('content').escape().trim().notEmpty()];
+// Create validation chain for comment field
+const commentValidation = [body('content').trim().notEmpty().isLength({max:255})];
 
 router.post('/commented', commentValidation, (req, res, next) => {
     const errors = validationResult(req);
