@@ -1,18 +1,33 @@
-/* LOGIN PAGE STYLING */
+/* REGISTER PAGE STYLING */
 
-.loginFooter {
+.registerFooter {
     bottom: 0;
 }
 
-.h1Login, .aLogin {
+.registerHeader {
+    width: 50%;
+    margin-left: 25%;
+    text-align: center;
+}
+
+.registerHeader h1 {
+    display: inline-block;
+    width: max-content;
+    margin: 0 auto;
+    transition: color 250ms;
+}
+
+.registerHeader h1:hover {
+    color: rgb(58, 88, 177);
+}
+
+.h1Register {
     margin-top: 40px;
     position: relative;
     text-align: center;
 }
 
-/* Styling for login form */
-
-.loginFormDiv {
+.registerFormDiv {
     position: relative;
     width: 50%;
     padding-top: 10px;
@@ -23,21 +38,21 @@
     border-bottom: 20px;
 }
 
-.loginFormDiv input {
+.registerFormDiv input {
     height: max-content;
     border-radius: 20px;
     border: none;
     font-size: 16px;
 }
 
-.loginFormDiv input[type=text] {
+.registerFormDiv input[type=text] {
     width: 58%;
     padding: 10px 20px;
     margin-left: 20px;
     background-color: #F1F1F1;
 }
 
-.loginFormDiv input[type=submit] {
+.registerFormDiv input[type=submit] {
     position: relative;
     display: block;
     width: 12%;
@@ -51,11 +66,11 @@
     color: white;
 }
 
-.loginFormDiv input[type=submit]:hover {
+.registerFormDiv input[type=submit]:hover {
     background-color: rgb(58, 88, 177);
 }
 
-.pLoginForm {
+.pRegisterForm {
     width: 350px;
     margin: 20px auto;
     text-align: right;

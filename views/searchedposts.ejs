@@ -2,42 +2,82 @@
 <html>
     <head>
         <title><%=appData.appName%> - Search for <%=searchtext%></title>
+        <link rel="icon" type="image/x-icon" href="/assets/fitterlogo.png">
         <link rel="stylesheet" type="text/css" href="/main.css"/>
+        <link rel="stylesheet" type="text/css" href="/searchedposts.css"/>
         <script src="/script.js"></script> 
     </head>
     <body>
-        <h1><a href="/"><%=appData.appName%></a></h1>
-        <!-- Search box -->
-        <form method="GET" action="/search/posts">
-            <input id="searchBox" type="text" name="searchtext" placeholder="Search for something...">
-            <input type="submit" value="Search">
-        </form>
-        <h2>Results for: <%=searchtext%></h2>
-        <ul>
-            <!-- For loop iterates through posts array -->
-            <% for (p of posts) { %>
-            <!-- Display post info on page -->
-            <li>
-                <h2><a href=/profile/<%=p.username%>><%=p.username%></a></h2>
-                <p><%=p.body%></p>
-                <p>Likes: <%=p.like_count%></p>
-                <p><%=p.date_posted.toLocaleString()%></p>
-                <% let postAction; %>
-                <% let postValue; %>
-                <!-- Conditional for whether to show like or unlike button -->
-                <% if (p.is_liked) { %>
-                    <% postAction = "../postunliked"; %>
-                    <% postValue = "Unlike"; %>
-                <% } else { %>
-                    <% postAction = "../postliked"; %>
-                    <% postValue = "Like"; %>
-                <% } %>
-                <form method="POST" action=<%=postAction%>>
-                    <input type="hidden" name="postID" value="<%=p.post_id%>"/>
-                    <input type="submit" value="<%=postValue%>"/>
+        <div class="contentBackground"></div>
+        <!-- Header w/ search bar -->
+        <div class="headerContainer">
+            <div class="header">
+                <a href="/"><h1><%=appData.appName%></h1></a>
+                <form class="searchbar" method="GET" action="/search/posts">
+                    <input id="searchBox" type="text" name="searchtext" placeholder="Search for posts, users, or activities...">
+                    <input type="submit" value="Search">
                 </form>
-            </li>
-            <% } %>
-        </ul>
+            </div>
+            <div class="headerDropdown">
+                <button class="headerDropdownButton"><%=user.username%></button>
+                <div class="headerDropdownMenu">
+                    <a href="/profile/<%=user.username%>">Your Profile</a>
+                    <a href="/settings">Account Settings</a>
+                    <a href="/logout">Log Out</a>
+                </div>
+            </div>
+        </div>
+        <h2 class="h2Search">Results for: <%=searchtext%></h2>
+        <div class="pageDivider"></div>
+        <div class="navbar">
+            <a href="/">Home</a>
+            <a href="/profile/<%=user.username%>">Profile</a>
+            <a href="/likedposts">Likes</a>
+            <a href="/activities">Activities</a>
+            <a href="/help">Help</a>
+        </div>
+        <!-- For loop iterates through posts array -->
+        <% for (p of posts) { %>
+        <div class="postContainer">
+            <a href="/post/<%=p.post_id%>">
+                <div class="postDiv">
+                    <h2><%=p.username%></h2>
+                    <div class="postBodyDiv"><%=p.body%></div>
+                    <% let postAction; %>
+                    <% let postValue; %>
+                    <% let postSubmitImageSrc; %>
+                    <!-- Conditional for whether to show like or unlike button -->
+                    <% if (p.is_liked) { %>
+                        <% postAction = "/postunliked"; %>
+                        <% postValue = "Unlike"; %>
+                        <% postSubmitImageSrc = "/assets/heart-full.png"; %>
+                    <% } else { %>
+                        <% postAction = "/postliked"; %>
+                        <% postValue = "Like"; %>
+                        <% postSubmitImageSrc = "/assets/heart.png"; %>
+                    <% } %>
+                    <form method="POST" class="postLikeButton" action=<%=postAction%>>
+                        <input type="hidden" name="postID" value="<%=p.post_id%>"/>
+                        <!-- Swap heart image when hovering (like to unlike, vice versa) -->
+                        <input class="postLikeImg" type="image" src="<%=postSubmitImageSrc%>" alt="<%=postValue%>"
+                            <% if (p.is_liked) { %>
+                                onmouseover="likeToUnlike(this)" 
+                                onmouseleave="unlikeToLike(this)"
+                            <% } else { %>
+                                onmouseover="unlikeToLike(this)" 
+                                onmouseleave="likeToUnlike(this)"
+                            <% } %>
+                        />
+                    </form>
+                    <div class="postLikesDiv"><%=p.like_count%></div>
+                    <div class="postDateDiv"><%=p.date_posted.toLocaleString()%></div>
+                </div>
+            </a>
+        </div>
+        <% } %>
+        <footer>
+            <p>Uicons by <a href="https://www.flaticon.com/uicons" title="Uicons">Flaticon</a></p>
+            <p>Fast icons created by <a href="https://www.flaticon.com/free-icons/fast" title="Fast icons">srip - Flaticon</a></p>
+        </footer>
     </body>
 </html>

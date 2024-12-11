@@ -24,10 +24,7 @@ router.get('/search/posts', searchValidation, redirectLogin, (req, res, next) =>
         let newData = {user: req.session.user, 
                        searchtext: req.query.searchtext,
                        posts: result[0]};
-        // Case: Matching post found
-        if (result) return res.render('searchedposts.ejs', newData);
-        // Case: No matching post found
-        res.send('No posts found');
+        return res.render('searchedposts.ejs', newData);
     }
 });
 

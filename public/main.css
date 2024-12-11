@@ -333,10 +333,10 @@ a, a:hover, a:active {
 /* Styling for border divider between sections on pages */
 
 .pageDivider {
-    position: absolute;
+    position: relative;
     width: 55%;
     height: 0;
-    left: 22.5%;
+    padding: 10px 0;
     border-bottom: 2px solid #DDDDDD;
-    margin-top: 5px;
+    margin: auto;
 }

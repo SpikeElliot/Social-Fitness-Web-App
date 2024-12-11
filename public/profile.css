@@ -1,0 +1,38 @@
+.userInfoDiv {
+    position: relative;
+    width: 50%;
+    padding-top: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+    padding-bottom: 20px;
+    border-bottom: 20px;
+}
+
+.userInfoDiv h2 {
+    display: inline-block;
+    width: max-content;
+}
+
+.followButton {
+    float: right;
+    width: 12.5%;
+    margin: 16.6px 0;
+}
+
+.followButton input[type=submit] {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: max-content;
+    padding: 10px;
+    border: none;
+    border-radius: 20px;
+    background-color: rgb(85, 120, 224);
+    transition: background-color 250ms;
+    color: white;
+}
+
+.followButton input[type=submit]:hover {
+    background-color: rgb(58, 88, 177);
+}

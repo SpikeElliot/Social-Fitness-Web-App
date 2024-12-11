@@ -4,68 +4,132 @@
         <!-- Conditional for checking user profile has been found -->
         <% let title; %>
         <% if (error) { %>
-            <% title = 'User Not Found';%>
+            <% title = 'User Not Found'; %>
         <% } else { %>
             <% title = `${profile.username}'s Profile`; %>
         <% } %>
         <% title += ` - ${appData.appName}`; %>
         <title><%=title%></title>
-        <link rel="stylesheet" type="text/css" href="../main.css"/>
+        <link rel="icon" type="image/x-icon" href="/assets/fitterlogo.png">
+        <link rel="stylesheet" type="text/css" href="/main.css"/>
+        <link rel="stylesheet" type="text/css" href="/profile.css"/>
         <script src="../script.js"></script>
     </head>
     <body>
-        <h1><a href="/"><%=appData.appName%></a></h1>
+        <div class="contentBackground"></div>
+        <!-- Header w/ search bar -->
+        <div class="headerContainer">
+            <div class="header">
+                <a href="/"><h1><%=appData.appName%></h1></a>
+                <form class="searchbar" method="GET" action="/search/posts">
+                    <input id="searchBox" type="text" name="searchtext" placeholder="Search for posts, users, or activities...">
+                    <input type="submit" value="Search">
+                </form>
+            </div>
+            <div class="headerDropdown">
+                <button class="headerDropdownButton"><%=user.username%></button>
+                <div class="headerDropdownMenu">
+                    <a href="/profile/<%=user.username%>">Your Profile</a>
+                    <a href="/settings">Account Settings</a>
+                    <a href="/logout">Log Out</a>
+                </div>
+            </div>
+        </div>
+        <div class="navbar">
+            <a href="/">Home</a>
+            <a href="/profile/<%=user.username%>">Profile</a>
+            <a href="/likedposts">Likes</a>
+            <a href="/activities">Activities</a>
+            <a href="/help">Help</a>
+        </div>
         <!-- Another check that user profile exists to prevent errors -->
-        <% if (error) { %>
-            <p>User does not exist!</p>
-            <br>
-            <a href="/">Return Home</a>
-        <% } else { %>
-        <h2><a href=/profile/<%=profile.username%>><%=profile.username%></a></h2>
-        <p>Followers: <%=profile.follower_count%></p>
-        <p>Following: <%=profile.following_count%></p>
-        <!-- Conditionals for when user's country or city are null in database -->
-        <p>Country:
-            <% if (profile.country != null) { %>
-                <%=profile.country%>
+        <div class="userInfoDiv">
+            <% if (error) { %>
+                <h2>User does not exist!</h2>
+                <br>
+                <a href="/">Return Home</a>
             <% } else { %>
-                Not provided
-            <% } %>
-        </p>
-        <p>City:
-            <% if (profile.city != null) { %>
-                <%=profile.city%>
+            <h2><a href=/profile/<%=profile.username%>><%=profile.username%></a></h2>
+            <!-- Check to make sure users cannot follow themselves -->
+            <% if (profile.user_id != user.id) { %>
+            <% let followAction; %>
+            <% let followValue; %>
+            <!-- Conditional for whether to show follow or unfollow -->
+            <% if (profile.is_followed) { %>
+                <% postAction = "/unfollowed"; %>
+                <% postValue = "Unfollow"; %>
             <% } else { %>
-                Not provided
+                <% postAction = "/followed"; %>
+                <% postValue = "Follow"; %>
             <% } %>
-        </p>
-        <p>Date joined: <%=profile.date_joined.toLocaleString()%></p>
-        <ul>
-            <!-- For loop iterates through posts array -->
-            <% for (p of posts) { %>
-                <!-- Display post info on page -->
-                <li>
-                    <h2><a href=/profile/<%=profile.username%>><%=profile.username%></a></h2>
-                    <p><%=p.body%></p>
-                    <p>Likes: <%=p.like_count%></p>
-                    <p><%=p.date_posted.toLocaleString()%></p>
-                    <% let postAction; %>
-                    <% let postValue; %>
-                    <!-- Conditional for whether to show like or unlike button -->
-                    <% if (p.is_liked) { %>
-                        <% postAction = "../postunliked"; %>
-                        <% postValue = "Unlike"; %>
-                    <% } else { %>
-                        <% postAction = "../postliked"; %>
-                        <% postValue = "Like"; %>
-                    <% } %>
-                    <form method="POST" action=<%=postAction%>>
-                        <input type="hidden" name="postID" value="<%=p.post_id%>"/>
-                        <input type="submit" value="<%=postValue%>"/>
-                    </form>
-                </li>
+            <form method="POST" class="followButton" action="<%=postAction%>">
+                <input type="hidden" name="followingID" value="<%=profile.user_id%>"/>
+                <input type="submit" value="<%=postValue%>"/>
+            </form>
             <% } %>
-        </ul>
-        <% } %>
+            <p>Followers: <%=profile.follower_count%></p>
+            <p>Following: <%=profile.following_count%></p>
+            <!-- Conditionals for when user's country or city are null in database -->
+            <p>Country:
+                <% if (profile.country != null) { %>
+                    <%=profile.country%>
+                <% } else { %>
+                    Not provided
+                <% } %>
+            </p>
+            <p>City:
+                <% if (profile.city != null) { %>
+                    <%=profile.city%>
+                <% } else { %>
+                    Not provided
+                <% } %>
+            </p>
+            <p>Date joined: <%=profile.date_joined.toLocaleString()%></p>
+            <% } %>
+        </div>
+        <div class="pageDivider"></div>
+        <!-- For loop iterates through posts array -->
+        <% for (p of posts) { %>
+            <div class="postContainer">
+                <a href="/post/<%=p.post_id%>">
+                    <div class="postDiv">
+                        <h2><%=profile.username%></h2>
+                        <div class="postBodyDiv"><%=p.body%></div>
+                        <% let postAction; %>
+                        <% let postValue; %>
+                        <% let postSubmitImageSrc; %>
+                        <!-- Conditional for whether to show like or unlike button -->
+                        <% if (p.is_liked) { %>
+                            <% postAction = "/postunliked"; %>
+                            <% postValue = "Unlike"; %>
+                            <% postSubmitImageSrc = "/assets/heart-full.png"; %>
+                        <% } else { %>
+                            <% postAction = "/postliked"; %>
+                            <% postValue = "Like"; %>
+                            <% postSubmitImageSrc = "/assets/heart.png"; %>
+                        <% } %>
+                        <form method="POST" class="postLikeButton" action=<%=postAction%>>
+                            <input type="hidden" name="postID" value="<%=p.post_id%>"/>
+                            <!-- Swap heart image when hovering (like to unlike, vice versa) -->
+                            <input class="postLikeImg" type="image" src="<%=postSubmitImageSrc%>" alt="<%=postValue%>"
+                                <% if (p.is_liked) { %>
+                                    onmouseover="likeToUnlike(this)" 
+                                    onmouseleave="unlikeToLike(this)"
+                                <% } else { %>
+                                    onmouseover="unlikeToLike(this)" 
+                                    onmouseleave="likeToUnlike(this)"
+                                <% } %>
+                            />
+                        </form>
+                        <div class="postLikesDiv"><%=p.like_count%></div>
+                        <div class="postDateDiv"><%=p.date_posted.toLocaleString()%></div>
+                    </div>
+                </a>
+            </div>
+    <% } %>
+    <footer>
+        <p>Uicons by <a href="https://www.flaticon.com/uicons" title="Uicons">Flaticon</a></p>
+        <p>Fast icons created by <a href="https://www.flaticon.com/free-icons/fast" title="Fast icons">srip - Flaticon</a></p>
+    </footer>
     </body>
 </html>

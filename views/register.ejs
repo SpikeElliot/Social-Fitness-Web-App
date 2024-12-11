@@ -2,18 +2,33 @@
 <html>
     <head>
         <title>Register for <%=appData.appName%></title>
+        <link rel="icon" type="image/x-icon" href="/assets/fitterlogo.png">
         <link rel="stylesheet" type="text/css" href="/main.css"/>
+        <link rel="stylesheet" type="text/css" href="/register.css"/>
         <script src="/script.js"></script> 
     </head>
     <body>
-        <h1>Register for a <%=appData.appName%> account</h1>
-        <form method="POST" action="registered">
-            <p>Username: <input id="username" type="text" name="username"/> (Must be between 3-64 characters)</p>
-            <p>Password: <input id="password" type="text" name="password"/> (Must be at least 8 characters)</p>
-            <p>First name: <input id="firstname" type="text" name="firstname"/></p>
-            <p>Last name: <input id="lastname" type="text" name="lastname"/></p>
-            <p>Email: <input id="email" type="text" name="email"/></p>
-            <input type="submit" value="Register"/>
-        </form>
+        <div class="contentBackground"></div>
+        <!-- Header w/ search bar -->
+        <div class="headerContainer">
+            <div class="registerHeader">
+                <a href="/"><h1><%=appData.appName%></h1></a>
+            </div>
+        </div>
+        <div class="navbar"></div>
+        <h1 class="h1Register">Register for a <%=appData.appName%> account</h1>
+        <div class="registerFormDiv">
+            <form method="POST" action="registered">
+                <p class="pRegisterForm">Username <input id="username" type="text" name="username"/> (Must be between 3-64 characters)</p>
+                <p class="pRegisterForm">Password <input id="password" type="text" name="password"/> (Must be at least 8 characters)</p>
+                <p class="pRegisterForm">First name <input id="firstname" type="text" name="firstname"/> (Max. 255 characters)</p>
+                <p class="pRegisterForm">Last name <input id="lastname" type="text" name="lastname"/> (Max. 255 characters)</p>
+                <p class="pRegisterForm">Email <input id="email" type="text" name="email"/> (Must be a valid email)</p>
+                <input type="submit" value="Register"/>
+            </form>
+        </div>
+        <footer class="registerFooter">
+            <p>Fast icons created by <a href="https://www.flaticon.com/free-icons/fast" title="Fast icons">srip - Flaticon</a></p>
+        </footer>
     </body>
 </html>
