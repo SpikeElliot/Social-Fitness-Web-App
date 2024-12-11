@@ -6,15 +6,42 @@
         <% if (error) { %>
             <% title = 'Post Not Found';%>
         <% } else { %>
-            <% title = `Post by: ${post.username}`; %>
+            <% title = `"${post.body}" by ${post.username}`; %>
         <% } %>
         <% title += ` - ${appData.appName}`; %>
         <title><%=title%></title>
-        <link rel="stylesheet" type="text/css" href="../main.css"/>
-        <script src="../script.js"></script> 
+        <link rel="icon" type="image/x-icon" href="/assets/fitterlogo.png">
+        <link rel="stylesheet" type="text/css" href="/main.css"/>
+        <link rel="stylesheet" type="text/css" href="/post.css"/>
+        <script src="/script.js"></script>
     </head>
     <body>
-        <h1><a href="/"><%=appData.appName%></a></h1>
+        <div class="contentBackground"></div>
+        <!-- Header w/ search bar -->
+        <div class="headerContainer">
+            <div class="header">
+                <a href="/"><h1><%=appData.appName%></h1></a>
+                <form class="searchbar" method="GET" action="/search/posts">
+                    <input id="searchBox" type="text" name="searchtext" placeholder="Search for posts, users, or activities...">
+                    <input type="submit" value="Search">
+                </form>
+            </div>
+            <div class="headerDropdown">
+                <button class="headerDropdownButton"><%=user.username%></button>
+                <div class="headerDropdownMenu">
+                    <a href="/profile/<%=user.username%>">Your Profile</a>
+                    <a href="/settings">Account Settings</a>
+                    <a href="/logout">Log Out</a>
+                </div>
+            </div>
+        </div>
+        <div class="navbar">
+            <a href="/">Home</a>
+            <a href="/profile/<%=user.username%>">Profile</a>
+            <a href="/likedposts">Likes</a>
+            <a href="/activities">Activities</a>
+            <a href="/help">Help</a>
+        </div>
         <!-- Another check that post exists to prevent errors -->
         <% if (error) { %>
             <p>This post has been deleted or never existed!</p>
@@ -22,54 +49,107 @@
             <a href="/">Back Home</a>
         <% } else { %>
         <!-- Display post info on page -->
-        <h2><a href="/profile/<%=post.username%>"><%=post.username%></a></h2>
-        <p><%=post.body%></p>
-        <p>Likes: <%=post.like_count%></p>
-        <p><%=post.date_posted.toLocaleString()%></p>
-        <% let postAction; %>
-        <% let postValue; %>
-        <!-- Conditional for whether to show like or unlike button -->
-        <% if (post.is_liked) { %>
-            <% postAction = "/postunliked"; %>
-            <% postValue = "Unlike"; %>
-        <% } else { %>
-            <% postAction = "/postliked"; %>
-            <% postValue = "Like"; %>
-        <% } %>
-        <form method="POST" action=<%=postAction%>>
-            <input type="hidden" name="postID" value="<%=post.post_id%>"/>
-            <input type="submit" value="<%=postValue%>"/>
-        </form>
-        <h2>Leave a comment:</h2>
-        <form method="POST" action="/commented">
-            <textarea class="postTextBox" type="text" name="content" onkeyup="displayTypingCharCount()" placeholder="Type something..." maxlength="255" rows="8" cols="60"></textarea>
-            <p class="postCharCount"></p>
-            <input type="hidden" name="user_id" value="<%=user.id%>">
-            <input type="hidden" name="post_id" value="<%=post.post_id%>">
-            <input type="submit" value="Post"/>
-        </form>
+        <div class="mainPostContainer">
+            <div class="postDiv">
+                <h2><a href="../profile/<%=post.username%>"><%=post.username%></a></h2>
+                <% if (user.id == post.user_id) { %>
+                    <form method="POST" class="deletePostForm" action="/postdeleted">
+                        <input type="hidden" name="postID" value="<%=post.post_id%>"/>
+                        <input class="deletePostButton" type="submit" value="Delete"/>
+                    </form>
+                <% } %>
+                <div class="postBodyDiv"><%=post.body%></div>
+                <% let postAction; %>
+                <% let postValue; %>
+                <% let postSubmitImageSrc; %>
+                <!-- Conditional for whether to show like or unlike button -->
+                <% if (post.is_liked) { %>
+                    <% postAction = "/postunliked"; %>
+                    <% postValue = "Unlike"; %>
+                    <% postSubmitImageSrc = "/assets/heart-full.png"; %>
+                <% } else { %>
+                    <% postAction = "/postliked"; %>
+                    <% postValue = "Like"; %>
+                    <% postSubmitImageSrc = "/assets/heart.png"; %>
+                <% } %>
+                <form method="POST" class="postLikeButton" action=<%=postAction%>>
+                    <input type="hidden" name="postID" value="<%=post.post_id%>"/>
+                    <!-- Swap heart image when hovering (like to unlike, vice versa) -->
+                    <input class="postLikeImg" type="image" src="<%=postSubmitImageSrc%>" alt="<%=postValue%>"
+                        <% if (post.is_liked) { %>
+                            onmouseover="likeToUnlike(this)" 
+                            onmouseleave="unlikeToLike(this)"
+                        <% } else { %>
+                            onmouseover="unlikeToLike(this)" 
+                            onmouseleave="likeToUnlike(this)"
+                        <% } %>
+                    />
+                </form>
+                <div class="postLikesDiv"><%=post.like_count%></div>
+                <div class="postDateDiv"><%=post.date_posted.toLocaleString()%></div>
+            </div>
+        </div>
+        <div class="pageDivider"></div>
+        <div class="postFormDiv">
+            <form method="POST" action="/commented">
+                <textarea class="postTextBox" type="text" name="content" onkeyup="displayTypingCharCount()" placeholder="Leave a comment!" maxlength="255"></textarea>
+                <input type="hidden" name="user_id" value=<%=user.id%>>
+                <input type="hidden" name="post_id" value="<%=post.post_id%>">
+                <input type="submit" value="Post">
+                <p class="postCharCount"></p>
+            </form>
+        </div>
+        <div class="pageDivider"></div>
         <% if (comments) { %>
             <% for (c of comments) { %>
-                <h2><a href="/profile/<%=c.username%>"><%=c.username%></a></h2>
-                <p><%=c.body%></p>
-                <p>Likes: <%=c.like_count%></p>
-                <p><%=c.date_commented.toLocaleString()%></p>
-                <% let commentAction; %>
-                <% let commentValue; %>
-                <!-- Conditional for whether to show like or unlike button -->
-                <% if (c.is_liked) { %>
-                    <% commentAction = "/commentunliked"; %>
-                    <% commentValue = "Unlike"; %>
-                <% } else { %>
-                    <% commentAction = "/commentliked"; %>
-                    <% commentValue = "Like"; %>
-                <% } %>
-                <form method="POST" action="<%=commentAction%>">
-                    <input type="hidden" name="commentID" value="<%=c.comment_id%>"/>
-                    <input type="submit" value="<%=commentValue%>"/>
-                </form>
+                <div class="postContainer">
+                    <div class="postDiv">
+                        <h2><a href="../profile/<%=c.username%>"><%=c.username%></a></h2>
+                        <% if (user.id == c.user_id) { %>
+                            <form method="POST" class="deletePostForm" action="/commentdeleted">
+                                <input type="hidden" name="commentID" value="<%=c.comment_id%>"/>
+                                <input type="hidden" name="userID" value="<%=user.id%>"/>
+                                <input class="deletePostButton" type="submit" value="Delete"/>
+                            </form>
+                        <% } %>
+                        <div class="postBodyDiv"><%=c.body%></div>
+                        <% let commentAction; %>
+                        <% let commentValue; %>
+                        <% let commentSubmitImageSrc; %>
+                        <!-- Conditional for whether to show like or unlike button -->
+                        <% if (c.is_liked) { %>
+                            <% commentAction = "/commentunliked"; %>
+                            <% commentValue = "Unlike"; %>
+                            <% commentSubmitImageSrc = "/assets/heart-full.png"; %>
+                        <% } else { %>
+                            <% commentAction = "/commentliked"; %>
+                            <% commentValue = "Like"; %>
+                            <% commentSubmitImageSrc = "/assets/heart.png"; %>
+                        <% } %>
+                        <form method="POST" class="postLikeButton" action=<%=commentAction%>>
+                            <input type="hidden" name="commentID" value="<%=c.comment_id%>"/>
+                            <input type="hidden" name="userID" value="<%=user.id%>"/>
+                            <!-- Swap heart image when hovering (like to unlike, vice versa) -->
+                            <input class="postLikeImg" type="image" src="<%=commentSubmitImageSrc%>" alt="<%=commentValue%>"
+                                <% if (c.is_liked) { %>
+                                    onmouseover="likeToUnlike(this)" 
+                                    onmouseleave="unlikeToLike(this)"
+                                <% } else { %>
+                                    onmouseover="unlikeToLike(this)" 
+                                    onmouseleave="likeToUnlike(this)"
+                                <% } %>
+                            />
+                        </form>
+                        <div class="postLikesDiv"><%=c.like_count%></div>
+                        <div class="postDateDiv"><%=c.date_commented.toLocaleString()%></div>
+                    </div>
+                </div>
             <% } %>
         <% } %>
         <% } %>
+        <footer>
+            <p>Uicons by <a href="https://www.flaticon.com/uicons" title="Uicons">Flaticon</a></p>
+            <p>Fast icons created by <a href="https://www.flaticon.com/free-icons/fast" title="Fast icons">srip - Flaticon</a></p>
+        </footer>
     </body>
 </html>

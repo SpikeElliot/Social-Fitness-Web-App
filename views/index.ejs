@@ -4,13 +4,10 @@
         <title><%=appData.appName%></title>
         <link rel="icon" type="image/x-icon" href="/assets/fitterlogo.png">
         <link rel="stylesheet" type="text/css" href="/main.css"/>
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"
-                integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
-                crossorigin="anonymous">
-        </script>
         <script src="/script.js"></script> 
     </head>
     <body>
+        <div class="contentBackground"></div>
         <!-- Header w/ search bar -->
         <div class="headerContainer">
             <div class="header">
@@ -30,20 +27,19 @@
             </div>
         </div>
         <div class="postFormDiv">
-            <h2>Tell us your thoughts or share an achievement!</h2>
             <form method="POST" action="/posted">
-                <textarea class="postTextBox" type="text" name="content" onkeyup="displayTypingCharCount()" placeholder="What do you want to say?" maxlength="255"></textarea>
-                <p class="postCharCount"></p>
+                <textarea class="postTextBox" type="text" name="content" onkeyup="displayTypingCharCount()" placeholder="Tell us your thoughts or share an achievement!" maxlength="255"></textarea>
                 <input type="hidden" name="userid" value=<%=user.id%>>
                 <input type="submit" value="Post">
+                <p class="postCharCount"></p>
             </form>
         </div>
-        <div class="homePageDivider"></div>
+        <div class="pageDivider"></div>
         <div class="navbar">
             <a href="/">Home</a>
             <a href="/profile/<%=user.username%>">Profile</a>
+            <a href="/likedposts">Likes</a>
             <a href="/activities">Activities</a>
-            <a href="/likedposts">Liked Posts</a>
             <a href="/help">Help</a>
         </div>
         <% if (posts) { %>
@@ -69,7 +65,16 @@
                             <% } %>
                             <form method="POST" class="postLikeButton" action=<%=postAction%>>
                                 <input type="hidden" name="postID" value="<%=p.post_id%>"/>
-                                <input class="postLikeImg" type="image" src="<%=postSubmitImageSrc%>" alt="<%=postValue%>"/>
+                                <!-- Swap heart image when hovering (like to unlike, vice versa) -->
+                                <input class="postLikeImg" type="image" src="<%=postSubmitImageSrc%>" alt="<%=postValue%>"
+                                    <% if (p.is_liked) { %>
+                                        onmouseover="likeToUnlike(this)" 
+                                        onmouseleave="unlikeToLike(this)"
+                                    <% } else { %>
+                                        onmouseover="unlikeToLike(this)" 
+                                        onmouseleave="likeToUnlike(this)"
+                                    <% } %>
+                                />
                             </form>
                             <div class="postLikesDiv"><%=p.like_count%></div>
                             <div class="postDateDiv"><%=p.date_posted.toLocaleString()%></div>

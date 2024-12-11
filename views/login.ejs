@@ -2,17 +2,43 @@
 <html>
     <head>
         <title>Sign in to <%=appData.appName%></title>
+        <link rel="icon" type="image/x-icon" href="/assets/fitterlogo.png">
         <link rel="stylesheet" type="text/css" href="/main.css"/>
+        <link rel="stylesheet" type="text/css" href="/login.css"/>
         <script src="/script.js"></script> 
     </head>
     <body>
-        <h1>Sign in to <%=appData.appName%></h1>
-        <form method="POST" action="/loggedin">
-            <p>Username: <input id="username" type="text" name="username"/></p>
-            <p>Password: <input id="password" type="text" name="password"/></p>
-            <input type="submit" value="Login" />
-        </form>
-        <br>
-        <a href="/register">Or Register Here</a>
+        <div class="contentBackground"></div>
+        <!-- Header w/ search bar -->
+        <div class="headerContainer">
+            <div class="header">
+                <a href="/"><h1><%=appData.appName%></h1></a>
+                <form class="searchbar" method="GET" action="/search/posts">
+                    <input id="searchBox" type="text" name="searchtext" placeholder="Sign in to search for posts, users, or activities...">
+                    <input type="submit" value="Search">
+                </form>
+            </div>
+        </div>
+        <div class="navbar">
+        </div>
+        <h1 class="h1Login">Sign in to <%=appData.appName%></h1>
+        <div class="loginFormDiv">
+            <form class="loginForm" method="POST" action="/loggedin">
+                <p class="pLoginForm">
+                    Username
+                    <input id="username" type="text" name="username"/>
+                </p>
+                <p class="pLoginForm">
+                    Password
+                    <input id="password" type="text" name="password"/>
+                </p>
+                <input type="submit" value="Login" />
+            </form>
+        </div>
+        <a href="/register" class="aLogin"><p>Or Register Here</p></a>
+        <footer class="loginFooter">
+            <p>Uicons by <a href="https://www.flaticon.com/uicons" title="Uicons">Flaticon</a></p>
+            <p>Fast icons created by <a href="https://www.flaticon.com/free-icons/fast" title="Fast icons">srip - Flaticon</a></p>
+        </footer>
     </body>
 </html>

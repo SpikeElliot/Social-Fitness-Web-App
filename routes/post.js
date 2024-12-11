@@ -38,6 +38,7 @@ router.get('/post/:id', redirectLogin, (req, res, next) => {
         }
         // Update newData object with comments, render post page
         newData.comments = result[0];
+        console.log(newData.comments);
         res.render('post.ejs', newData);
     }
 });
@@ -154,6 +155,30 @@ router.post('/commentunliked', (req, res, next) => {
     function decrementCommentLikeCount(err, result) {
         if (err) console.error(err.message);
         // TO DO: Eventually make it so page doesn't reload after liking
+        res.redirect('/');
+    }
+});
+
+router.post('/commentdeleted', (req, res, next) => {
+    let newRecord = [req.body.commentID, req.body.userID];
+    let sqlQuery = `CALL pr_deletecomment(?,?)`; // Delete comment procedure
+    // Delete comment row in database matching comment_id
+    db.query(sqlQuery, newRecord, deleteComment);
+
+    function deleteComment(err, result) {
+        if (err) console.error(err.message);
+        res.redirect('/');
+    }
+});
+
+router.post('/postdeleted', (req, res, next) => {
+    let newRecord = [req.body.postID, req.body.userID];
+    let sqlQuery = `CALL pr_deletepost(?,?)`; // Delete post procedure
+    // Delete post row in database matching post_id
+    db.query(sqlQuery, newRecord, deletePost);
+
+    function deletePost(err, result) {
+        if (err) console.error(err.message);
         res.redirect('/');
     }
 });
