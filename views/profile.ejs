@@ -49,41 +49,44 @@
                 <br>
                 <a href="/">Return Home</a>
             <% } else { %>
-            <h2><a href=/profile/<%=profile.username%>><%=profile.username%></a></h2>
-            <!-- Check to make sure users cannot follow themselves -->
-            <% if (profile.user_id != user.id) { %>
-            <% let followAction; %>
-            <% let followValue; %>
-            <!-- Conditional for whether to show follow or unfollow -->
-            <% if (profile.is_followed) { %>
-                <% postAction = "/unfollowed"; %>
-                <% postValue = "Unfollow"; %>
+            <!-- Check if profile is session user's profile -->
+            <h1><a href=/profile/<%=profile.username%>><%=profile.username%></a></h1>
+            <% if (profile.user_id == user.id) { %>
+                <% let url = `https://www.strava.com/oauth/authorize?client_id=${clientId}&response_type=code&redirect_uri=http://localhost:8000/exchange_token&approval_prompt=force&scope=read`%>
+                <a class="stravaAccountLink" href=<%=url%>>
+                    Connect your Strava account
+                </a>
             <% } else { %>
-                <% postAction = "/followed"; %>
-                <% postValue = "Follow"; %>
-            <% } %>
-            <form method="POST" class="followButton" action="<%=postAction%>">
-                <input type="hidden" name="followingID" value="<%=profile.user_id%>"/>
-                <input type="submit" value="<%=postValue%>"/>
-            </form>
-            <% } %>
-            <p>Followers: <%=profile.follower_count%></p>
-            <p>Following: <%=profile.following_count%></p>
+                <% let followAction; %>
+                <% let followValue; %>
+                <!-- Conditional for whether to show follow or unfollow -->
+                <% if (profile.is_followed) { %>
+                    <% postAction = "/unfollowed"; %>
+                    <% postValue = "Unfollow"; %>
+                <% } else { %>
+                    <% postAction = "/followed"; %>
+                    <% postValue = "Follow"; %>
+                <% } %>
+                <form method="POST" class="followButton" action="<%=postAction%>">
+                    <input type="hidden" name="followingID" value="<%=profile.user_id%>"/>
+                    <input type="submit" value="<%=postValue%>"/>
+                </form>
+                <% } %>
+            <div class="followInfoDiv">
+                <h2><a href="<%=profile.username%>/followers"><%=profile.follower_count%> Followers</a></h2>
+                <h2><a class="followingCount" href="<%=profile.username%>/following"><%=profile.following_count%> Following</a></h2>
+            </div>
             <!-- Conditionals for when user's country or city are null in database -->
-            <p>Country:
-                <% if (profile.country != null) { %>
-                    <%=profile.country%>
-                <% } else { %>
-                    Not provided
-                <% } %>
-            </p>
-            <p>City:
+            <% let locationMsg; %>
+            <% if (profile.country != null) { %>
+                <% locationMsg = profile.country; %>
                 <% if (profile.city != null) { %>
-                    <%=profile.city%>
-                <% } else { %>
-                    Not provided
+                    <% locationMsg += `, ${profile.city}`; %>
                 <% } %>
-            </p>
+            <% } else { %>
+                <% locationMsg = "Not provided" %>
+            <% } %>
+            <p>Location: <%=locationMsg%></p>
             <p>Date joined: <%=profile.date_joined.toLocaleString()%></p>
             <% } %>
         </div>

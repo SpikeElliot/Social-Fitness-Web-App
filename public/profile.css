@@ -1,23 +1,39 @@
 .userInfoDiv {
     position: relative;
     width: 50%;
-    padding-top: 10px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 20px;
-    padding-bottom: 20px;
-    border-bottom: 20px;
+    margin: 0 auto;
 }
 
-.userInfoDiv h2 {
+.userInfoDiv p {
+    color: black;
+}
+
+.followInfoDiv h2 {
     display: inline-block;
     width: max-content;
+}
+
+.followInfoDiv h2 {
+    margin-top: 0;
+}
+
+.followingCount {
+    margin-left: 30px;
+}
+
+.userInfoDiv h1 {
+    display: inline-block;
+    width: max-content;
+}
+
+.stravaAccountLink {
+    margin-left: 30px;
 }
 
 .followButton {
     float: right;
     width: 12.5%;
-    margin: 16.6px 0;
+    margin: 36.6px 0;
 }
 
 .followButton input[type=submit] {

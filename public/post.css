@@ -23,3 +23,10 @@
     margin-right: auto;
     padding-bottom: 20px;
 }
+
+.commentsHeader {
+    position: relative;
+    width: 50%;
+    margin: 30px auto 0 auto;
+    text-align: left;
+}

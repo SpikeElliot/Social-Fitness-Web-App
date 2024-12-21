@@ -4,6 +4,12 @@ const ejs = require('ejs'); // EJS
 const mysql = require('mysql2'); // MySQL (for database)
 const session = require('express-session'); // Session for user account log-ins
 const validator = require('express-validator'); // For validation and sanitisation
+require('dotenv').config(); // Use environment variables for API
+const clientSecret = process.env.clientSecret;
+const clientId = process.env.clientId;
+// Set global variables for API
+global.clientSecret = clientSecret;
+global.clientId = clientId;
 
 // Create the express application object
 const app = express();
@@ -96,6 +102,10 @@ app.use(('/post', postRoutes));
 // User routes
 const userRoutes = require('./routes/user');
 app.use(('/user', userRoutes));
+
+// exchange_token route (for Strava API)
+const exchangeTokenRoute = require('./routes/exchange_token');
+app.use(('/exchange_token', exchangeTokenRoute));
 
 // Start the web app listening
 app.listen(port, () => console.log(`Node app listening on port: ${port}`));
