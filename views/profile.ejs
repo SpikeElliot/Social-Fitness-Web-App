@@ -49,14 +49,9 @@
                 <br>
                 <a href="/">Return Home</a>
             <% } else { %>
-            <!-- Check if profile is session user's profile -->
             <h1><a href=/profile/<%=profile.username%>><%=profile.username%></a></h1>
-            <% if (profile.user_id == user.id) { %>
-                <% let url = `https://www.strava.com/oauth/authorize?client_id=${clientId}&response_type=code&redirect_uri=http://localhost:8000/exchange_token&approval_prompt=force&scope=read`%>
-                <a class="stravaAccountLink" href=<%=url%>>
-                    Connect your Strava account
-                </a>
-            <% } else { %>
+            <!-- Check if profile is session user's profile -->
+            <% if (profile.user_id != user.id) { %>
                 <% let followAction; %>
                 <% let followValue; %>
                 <!-- Conditional for whether to show follow or unfollow -->
@@ -75,7 +70,12 @@
             <div class="followInfoDiv">
                 <h2><a href="<%=profile.username%>/followers"><%=profile.follower_count%> Followers</a></h2>
                 <h2><a class="followingCount" href="<%=profile.username%>/following"><%=profile.following_count%> Following</a></h2>
+                <h2 class="postsCount"><%=posts.length %> Posts</h2>
             </div>
+            <% if (profile.user_id == user.id) { %>
+                <% let url = `https://www.strava.com/oauth/authorize?client_id=${clientId}&response_type=code&redirect_uri=http://localhost:8000/exchange_token&approval_prompt=force&scope=read_all,activity:read_all`%>
+                <a href=<%=url%>>Connect your Strava account</a>
+            <% } %>
             <!-- Conditionals for when user's country or city are null in database -->
             <% let locationMsg; %>
             <% if (profile.country != null) { %>

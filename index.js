@@ -107,5 +107,9 @@ app.use(('/user', userRoutes));
 const exchangeTokenRoute = require('./routes/exchange_token');
 app.use(('/exchange_token', exchangeTokenRoute));
 
+// Activities routes
+const activitiesRoutes = require('./routes/activities');
+app.use(('/activities', activitiesRoutes));
+
 // Start the web app listening
 app.listen(port, () => console.log(`Node app listening on port: ${port}`));

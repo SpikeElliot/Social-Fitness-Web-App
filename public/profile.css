@@ -17,17 +17,13 @@
     margin-top: 0;
 }
 
-.followingCount {
+.followingCount, .postsCount {
     margin-left: 30px;
 }
 
 .userInfoDiv h1 {
     display: inline-block;
     width: max-content;
-}
-
-.stravaAccountLink {
-    margin-left: 30px;
 }
 
 .followButton {

@@ -1,8 +1,6 @@
 const express = require('express');
 const router = express.Router(); // Create a router object
 
-// TO DO: Post connected user's athlete info to database
-
 router.get('/exchange_token', (req, res, next) => {
     async function exchangeToken() {
         const authorizationCode = req.query.code;
@@ -18,11 +16,25 @@ router.get('/exchange_token', (req, res, next) => {
             .then(data => {
                 const accessToken = data.access_token;
                 const refreshToken = data.refresh_token;
-                res.json(data);
+                const userCountry = data.athlete.country;
+                const userCity = data.athlete.city;
+                const stravaId = data.athlete.id;
+
+                let newRecord = [req.session.user.id, accessToken, 
+                                 refreshToken, userCountry,
+                                 userCity, stravaId];
+                let sqlQuery = `CALL pr_setuserstravadata(?,?,?,?,?,?)`;
+
+                db.query(sqlQuery, newRecord, postUserStravaData);
             })
             .catch(err => {
                 console.error('Request failed,', err);
             })
+    }
+
+    function postUserStravaData(err, result) {
+        if (err) console.error(err.message);
+        return res.redirect('/');
     }
 
     exchangeToken();
