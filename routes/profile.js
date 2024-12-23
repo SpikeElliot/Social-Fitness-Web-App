@@ -25,6 +25,7 @@ router.get('/profile/:username', redirectLogin, (req, res, next) => {
         // Case: Matching username found
         // Update newData object with profile info
         newData.profile = result[0][0];
+        console.log(newData.profile);
         newData.profile.username = req.params.username;
         
         newRecord = [req.session.user.id, req.params.username];
@@ -43,6 +44,25 @@ router.get('/profile/:username', redirectLogin, (req, res, next) => {
         res.render('profile.ejs', newData);
     }
 });
+
+router.get('/profile/:username/likedposts', redirectLogin, (req, res, next) => {
+    let newRecord = [req.session.user.id, req.params.username];
+    let sqlQuery = `CALL pr_getlikedposts(?,?);`;
+    db.query(sqlQuery, newRecord, getLikedPosts);
+
+    function getLikedPosts(err, result) {
+        if (err) {
+            console.error(err.message);
+            return res.redirect('/');
+        }
+        let newData = {};
+        newData.posts = result[0];
+        newData.user = req.session.user;
+        newData.profile = {};
+        newData.profile.username = req.params.username;
+        res.render('likedposts.ejs', newData)
+    }
+})
 
 // Export the router so index.js can access it
 module.exports = router;

@@ -1,9 +1,10 @@
 <!doctype html>
 <html>
     <head>
-        <title><%=appData.appName%> - Search for <%=searchtext%></title>
+        <title><%=user.username%>'s Liked Posts - <%=appData.appName%></title>
         <link rel="icon" type="image/x-icon" href="/assets/fitterlogo.png">
         <link rel="stylesheet" type="text/css" href="/main.css"/>
+        <link rel="stylesheet" type="text/css" href="/searchedposts.css"/>
         <script src="/script.js"></script> 
     </head>
     <body>
@@ -26,7 +27,13 @@
                 </div>
             </div>
         </div>
-        <h2 class="genericPageHeader">Results for: <%=searchtext%></h2>
+        <% let headerMessage; %>
+        <% if (profile.username == user.username) { %>
+            <% headerMessage = "Your"; %>
+        <% } else { %>
+            <% headerMessage = `${profile.username}'s`; %>
+        <% } %>
+        <h2 class="genericPageHeader"><a href="/profile/<%=profile.username%>"><%=headerMessage%></a> Liked Posts (<%=posts.length%>)</h2>
         <div class="pageDivider"></div>
         <div class="navbar">
             <a href="/">Home</a>

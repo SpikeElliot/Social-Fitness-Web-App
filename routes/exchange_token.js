@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router(); // Create a router object
 
-router.get('/exchange_token', (req, res, next) => {
+router.get('/exchange_token', redirectLogin, (req, res, next) => {
     async function exchangeToken() {
         const authorizationCode = req.query.code;
         console.log(authorizationCode);
@@ -19,11 +19,12 @@ router.get('/exchange_token', (req, res, next) => {
                 const userCountry = data.athlete.country;
                 const userCity = data.athlete.city;
                 const stravaId = data.athlete.id;
+                const tokenExpiration = data.expires_at;
 
                 let newRecord = [req.session.user.id, accessToken, 
                                  refreshToken, userCountry,
-                                 userCity, stravaId];
-                let sqlQuery = `CALL pr_setuserstravadata(?,?,?,?,?,?)`;
+                                 userCity, stravaId, tokenExpiration];
+                let sqlQuery = `CALL pr_setuserstravadata(?,?,?,?,?,?,?)`;
 
                 db.query(sqlQuery, newRecord, postUserStravaData);
             })

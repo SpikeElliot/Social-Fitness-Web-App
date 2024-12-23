@@ -38,7 +38,7 @@
         <div class="navbar">
             <a href="/">Home</a>
             <a href="/profile/<%=user.username%>">Profile</a>
-            <a href="/likedposts">Likes</a>
+            <a href="/profile/<%=user.username%>/likedposts">Likes</a>
             <a href="/activities">Activities</a>
             <a href="/help">Help</a>
         </div>
@@ -86,6 +86,8 @@
                     />
                 </form>
                 <div class="postLikesDiv"><%=post.like_count%></div>
+                <div class="postCommentsImgDiv"><img src="/assets/comment.png" alt="Comments"></div>
+                <div class="postCommentsCountDiv"><%=post.comment_count%></div>
                 <div class="postDateDiv"><%=post.date_posted.toLocaleString()%></div>
             </div>
         </div>
@@ -100,7 +102,7 @@
             </form>
         </div>
         <div class="pageDivider"></div>
-        <h2 class="commentsHeader">Comments</h2>
+        <h2 class="commentsHeader">Comments (<%=comments.length%>)</h2>
         <% if (comments) { %>
             <% for (c of comments) { %>
                 <div class="postContainer">

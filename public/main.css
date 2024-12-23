@@ -99,6 +99,13 @@ a, a:hover, a:active {
     color: rgb(58, 88, 177);
 }
 
+.genericPageHeader {
+    width: 55%;
+    margin: 40px auto 20px auto;
+    position: relative;
+    left: 2.5%;
+}
+
 /* Header dropdown menu styling */
 
 .headerDropdown {
@@ -270,8 +277,19 @@ a, a:hover, a:active {
     height: auto;
 }
 
-.postLikesDiv {
-    display:inline-block;
+.postLikesDiv, .postCommentsImgDiv, .postCommentsCountDiv {
+    display: inline-block;
+}
+
+.postCommentsImgDiv img, .postCommentsCountDiv {
+    position:relative;
+    left: 20px;
+}
+
+.postCommentsImgDiv img {
+    top: 2.5px;
+    width: 16px;
+    height: auto;
 }
 
 .postDateDiv {

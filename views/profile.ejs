@@ -38,7 +38,7 @@
         <div class="navbar">
             <a href="/">Home</a>
             <a href="/profile/<%=user.username%>">Profile</a>
-            <a href="/likedposts">Likes</a>
+            <a href="/profile/<%=user.username%>/likedposts">Likes</a>
             <a href="/activities">Activities</a>
             <a href="/help">Help</a>
         </div>
@@ -69,10 +69,11 @@
                 <% } %>
             <div class="followInfoDiv">
                 <h2><a href="<%=profile.username%>/followers"><%=profile.follower_count%> Followers</a></h2>
-                <h2><a class="followingCount" href="<%=profile.username%>/following"><%=profile.following_count%> Following</a></h2>
-                <h2 class="postsCount"><%=posts.length %> Posts</h2>
+                <h2><a class="infoCount" href="<%=profile.username%>/following"><%=profile.following_count%> Following</a></h2>
+                <h2><a class="infoCount" href=""><%=posts.length%> Posts</a></h2>
+                <h2><a class="infoCount" href="/profile/<%=profile.username%>/likedposts"><%=profile.post_like_count%> Likes</a></h2>
             </div>
-            <% if (profile.user_id == user.id) { %>
+            <% if (profile.user_id == user.id && profile.strava_id == null) { %>
                 <% let url = `https://www.strava.com/oauth/authorize?client_id=${clientId}&response_type=code&redirect_uri=http://localhost:8000/exchange_token&approval_prompt=force&scope=read_all,activity:read_all`%>
                 <a href=<%=url%>>Connect your Strava account</a>
             <% } %>
@@ -125,6 +126,8 @@
                             />
                         </form>
                         <div class="postLikesDiv"><%=p.like_count%></div>
+                        <div class="postCommentsImgDiv"><img src="/assets/comment.png" alt="Comments"></div>
+                        <div class="postCommentsCountDiv"><%=p.comment_count%></div>
                         <div class="postDateDiv"><%=p.date_posted.toLocaleString()%></div>
                     </div>
                 </a>
