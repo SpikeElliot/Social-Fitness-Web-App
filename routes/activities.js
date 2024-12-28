@@ -6,6 +6,9 @@ router.get('/getactivities', redirectLogin, (req, res, next) => {
     let activityData = [];
     let newRecord = [req.session.user.id];
     let sqlQuery = `CALL pr_getuserapitoken(?);`;
+
+    console.log('----------------------------------------');
+    console.log('Getting current API access token...');
     db.query(sqlQuery, newRecord, getToken);
 
     function getToken(err, result) {
@@ -21,7 +24,7 @@ router.get('/getactivities', redirectLogin, (req, res, next) => {
         }
 
         const expiration = result[0][0].token_expiration;
-        const now = Date.now();
+        const now = Date.now() / 1000; // Convert from milliseconds to seconds
 
         // Case: access token has expired
         if (expiration < now) {
@@ -30,10 +33,12 @@ router.get('/getactivities', redirectLogin, (req, res, next) => {
         }
 
         // Case: access token still valid
-        getActivites();
+        getActivities();
     }
 
     async function getNewToken(rToken) {
+        console.log('Requesting new API access token...');
+
         const url = `https://www.strava.com/api/v3/oauth/token?client_id=${clientId}&client_secret=${clientSecret}&grant_type=refresh_token&refresh_token=${rToken}`;
         const options = {
             method: 'POST'
@@ -50,7 +55,11 @@ router.get('/getactivities', redirectLogin, (req, res, next) => {
                 // Update user row with new token data
                 newRecord = [req.session.user.id, newToken, newExpiration];
                 sqlQuery = `CALL pr_updateuserapitoken(?,?,?);`;
+                console.log('Updating token...');
                 db.query(sqlQuery, newRecord, updateToken);
+            })
+            .catch(err => {
+                console.error('Request failed,', err);
             })
     }
     
@@ -64,6 +73,8 @@ router.get('/getactivities', redirectLogin, (req, res, next) => {
     }
 
     async function getActivities() {
+        console.log('Requesting API activity data...');
+
         const url = `https://www.strava.com/api/v3/athlete/activities`;
         const options = {
             method: 'GET',
@@ -77,7 +88,7 @@ router.get('/getactivities', redirectLogin, (req, res, next) => {
             .then(data => {
                 // Case: no activities
                 if (data.length == 0) {
-                    return res.send("No activites found. Post some activities on Strava to see them here!");
+                    return res.send('No activites found. Post some activities on Strava to see them here!');
                 }
 
                 // Get all relevant activity data to insert into database
@@ -111,6 +122,7 @@ router.get('/getactivities', redirectLogin, (req, res, next) => {
                 // Get the most recent activity from database
                 newRecord = [req.session.user.id];
                 sqlQuery = `CALL pr_getlastactivity(?);`;
+                console.log('Getting most recent saved activity...');
                 db.query(sqlQuery, newRecord, getLastActivity);
             })
             .catch(err => {
@@ -134,10 +146,6 @@ router.get('/getactivities', redirectLogin, (req, res, next) => {
                                           average_speed, average_watts,
                                           max_speed, max_watts) VALUES `;
         for (let i = 0; i < activityData.length; i += 10) {
-            if (i != 0) {
-                sqlQuery += ', ';
-            }
-
             // Check if activity is new and hasn't already been added to database
             if (activityCutoff != false) {
                 if (new Date(activityData[i+2]) <= activityCutoff) {
@@ -147,6 +155,9 @@ router.get('/getactivities', redirectLogin, (req, res, next) => {
             }
             
             // Necessary formatting for SQL query
+            if (i != 0) {
+                sqlQuery += ', ';
+            }
             sqlQuery += `("${req.session.user.id}"`;
 
             // Add values to insert into row
@@ -158,16 +169,19 @@ router.get('/getactivities', redirectLogin, (req, res, next) => {
                     sqlQuery += `,${activityData[j]}`
                 };
             }
-
             sqlQuery += ')';
         }
         sqlQuery += ';';
 
-        // Case: new activities, insert into database
-        if (newActivities) return db.query(sqlQuery, insertActivities);
-
-        // Case: no new activities, send user to activities page
-        res.redirect('/activities');
+        if (newActivities) {
+            // Case: new activities, insert into database
+            console.log('Saving new activities to database...')
+            db.query(sqlQuery, insertActivities);
+        } else {
+            // Case: no new activities, send user to activities page
+            console.log('Result: No new activities to save');
+            res.redirect('/activities');
+        }
     }
 
     function insertActivities(err, result) {
@@ -175,7 +189,9 @@ router.get('/getactivities', redirectLogin, (req, res, next) => {
             console.error(err.message);
             return res.redirect('/');
         }
+
         // TO DO: Create activities page that displays all saved in database
+        console.log('Result: New activities saved');
         res.redirect('/activities');
     }
 })

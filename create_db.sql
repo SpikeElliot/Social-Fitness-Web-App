@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS `fitter`.`activity` (
     REFERENCES `fitter`.`user` (`user_id`)
     ON DELETE CASCADE)
 ENGINE = InnoDB
-AUTO_INCREMENT = 121
+AUTO_INCREMENT = 122
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -198,36 +198,6 @@ USE `fitter` ;
 CREATE TABLE IF NOT EXISTS `fitter`.`vw_allpostinfo` (`post_id` INT, `body` INT, `date_posted` INT, `like_count` INT, `comment_count` INT, `username` INT);
 
 -- -----------------------------------------------------
--- procedure pr_decrementcommentlikes
--- -----------------------------------------------------
-
-DELIMITER $$
-USE `fitter`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `pr_decrementcommentlikes`(unliked_comment_id INT)
-BEGIN
-UPDATE comment
-                        SET like_count = like_count - 1
-                        WHERE comment_id = unliked_comment_id;
-END$$
-
-DELIMITER ;
-
--- -----------------------------------------------------
--- procedure pr_decrementpostlikes
--- -----------------------------------------------------
-
-DELIMITER $$
-USE `fitter`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `pr_decrementpostlikes`(unliked_post_id INT)
-BEGIN
-UPDATE post
-                        SET like_count = like_count - 1
-                        WHERE post_id = unliked_post_id;
-END$$
-
-DELIMITER ;
-
--- -----------------------------------------------------
 -- procedure pr_deletecomment
 -- -----------------------------------------------------
 
@@ -254,8 +224,12 @@ USE `fitter`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `pr_deletecommentlike`(unliked_comment_id INT, unliker_id INT)
 BEGIN
 DELETE FROM comment_like
-                    WHERE comment_id = unliked_comment_id
-                    AND user_id = unliker_id;
+		WHERE comment_id = unliked_comment_id
+		AND user_id = unliker_id;
+        
+UPDATE comment
+		SET like_count = like_count - 1
+		WHERE comment_id = unliked_comment_id;
 END$$
 
 DELIMITER ;
@@ -282,9 +256,13 @@ DELIMITER $$
 USE `fitter`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `pr_deletepostlike`(unliked_post_id INT, unliker_id INT)
 BEGIN
-DELETE FROM post_like
-                    WHERE post_id = unliked_post_id
-                    AND user_id = unliker_id;
+	DELETE FROM post_like
+		WHERE post_id = unliked_post_id
+		AND user_id = unliker_id;
+                    
+	UPDATE post
+		SET like_count = like_count - 1
+		WHERE post_id = unliked_post_id;
 END$$
 
 DELIMITER ;
@@ -382,36 +360,6 @@ END$$
 DELIMITER ;
 
 -- -----------------------------------------------------
--- procedure pr_incrementcommentlikes
--- -----------------------------------------------------
-
-DELIMITER $$
-USE `fitter`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `pr_incrementcommentlikes`(liked_comment_id INT)
-BEGIN
-	UPDATE comment
-                        SET like_count = like_count + 1
-                        WHERE comment_id = liked_comment_id;
-END$$
-
-DELIMITER ;
-
--- -----------------------------------------------------
--- procedure pr_incrementpostlikes
--- -----------------------------------------------------
-
-DELIMITER $$
-USE `fitter`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `pr_incrementpostlikes`(liked_post_id INT)
-BEGIN
-	UPDATE post
-                        SET like_count = like_count + 1
-                        WHERE post_id = liked_post_id;
-END$$
-
-DELIMITER ;
-
--- -----------------------------------------------------
 -- procedure pr_indexposts
 -- -----------------------------------------------------
 
@@ -472,6 +420,10 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `pr_makecommentlike`(liked_comment_i
 BEGIN
 	INSERT INTO comment_like (comment_id, user_id)
 	VALUES (liked_comment_id, liker_id);
+    
+    UPDATE comment
+		SET like_count = like_count + 1
+		WHERE comment_id = liked_comment_id;
 END$$
 
 DELIMITER ;
@@ -498,8 +450,12 @@ DELIMITER $$
 USE `fitter`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `pr_makepostlike`(liked_post_id INT, liker_id INT)
 BEGIN
-INSERT INTO post_like (post_id, user_id)
-                    VALUES (liked_post_id, liker_id);
+	INSERT INTO post_like (post_id, user_id)
+		VALUES (liked_post_id, liker_id);
+        
+	UPDATE post
+		SET like_count = like_count + 1
+		WHERE post_id = liked_post_id;
 END$$
 
 DELIMITER ;

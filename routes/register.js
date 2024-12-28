@@ -25,22 +25,26 @@ router.post('/registered', registerValidation, (req, res, next) => {
     }
     const plainPassword = req.body.password;
     // Encrypt user's password using bcrypt hashing algorithm
+    console.log('----------------------------------------');
+    console.log('Hashing password...');
     bcrypt.hash(plainPassword, saltRounds, encryptPassword);
     
     function encryptPassword(err, hashedPassword) {
         let newRecord = [req.body.username, hashedPassword, req.body.firstname,
             req.body.lastname, req.body.email];
-        let sqlQuery = `CALL pr_registeruser(?,?,?,?,?);`; // Insert user data procedure
+        let sqlQuery = `CALL pr_registeruser(?,?,?,?,?);`;
         // Add new user to database
+        console.log('Saving new user to database...');
         db.query(sqlQuery, newRecord, registerUser);   
     }
 
     function registerUser(err, result) {
-        if (err) { // Handle MySQL Errors
+        if (err) {
             res.redirect('/register');
             return console.error(err.message);
         }
         // Case: No database errors
+        console.log('Result: New user saved successfully');
         res.redirect('/login'); // Send user to login page
     }
 });

@@ -3,8 +3,9 @@ const router = express.Router(); // Create a router object
 
 router.get('/exchange_token', redirectLogin, (req, res, next) => {
     async function exchangeToken() {
+        console.log('----------------------------------------');
+        console.log('Exchanging authorisation token for access and refresh tokens...');
         const authorizationCode = req.query.code;
-        console.log(authorizationCode);
 
         const url = `https://www.strava.com/oauth/token?client_id=${clientId}&client_secret=${clientSecret}&code=${authorizationCode}&grant_type=authorization_code`;
         const options = {
@@ -25,17 +26,21 @@ router.get('/exchange_token', redirectLogin, (req, res, next) => {
                                  refreshToken, userCountry,
                                  userCity, stravaId, tokenExpiration];
                 let sqlQuery = `CALL pr_setuserstravadata(?,?,?,?,?,?,?)`;
-
-                db.query(sqlQuery, newRecord, postUserStravaData);
+                console.log('Saving connected Strava user data to database...');
+                db.query(sqlQuery, newRecord, saveUserStravaData);
             })
             .catch(err => {
                 console.error('Request failed,', err);
             })
     }
 
-    function postUserStravaData(err, result) {
-        if (err) console.error(err.message);
-        return res.redirect('/');
+    function saveUserStravaData(err, result) {
+        if (err) {
+            console.error(err.message);
+        } else {
+            console.log('Result: Strava user data saved to database');
+        }
+        res.redirect('/');
     }
 
     exchangeToken();

@@ -23,6 +23,8 @@ router.post('/loggedin', loginValidation, (req, res, next) => {
     let newRecord = [req.body.username];
     let sqlQuery = `CALL pr_login(?);`; // Get Login Details Procedure
     // Query database to find username matching input and get hashed pw
+    console.log('----------------------------------------');
+    console.log('Getting login details with matching username...');
     db.query(sqlQuery, newRecord, getLoginDetails);
 
     function getLoginDetails(err, result) {
@@ -33,12 +35,14 @@ router.post('/loggedin', loginValidation, (req, res, next) => {
         // Case: No matching username found
         if (result[0].length == 0) {
             // TO DO: Make this cleaner and functional
+            console.log('Result: No matching username found');
             return res.send('User not found'); // Send error message
         }
         // Case: Matching username found
         let hashedPw = result[0][0].hashed_password.toString(); // Get hashed pw
         user_id = result[0][0].user_id; // Set outer scope user_id value
         // Compare hashed input to hashed password of user in database
+        console.log('Comparing hashed input to saved password hash...');
         bcrypt.compare(req.body.password, hashedPw, matchPasswords);
     }
 
@@ -46,12 +50,14 @@ router.post('/loggedin', loginValidation, (req, res, next) => {
         if (err) next(err); // Handle Bcrypt Errors
         // Case: Passwords match
         if (result) { // Log user in and redirect to home
+            console.log('Result: Input password is correct');
             req.session.user = {id: user_id,
                                 username: req.body.username};
             return res.redirect('/');
         } 
         // Case: Passwords do not match
         // TO DO: Make this cleaner and functional
+        console.log('Result: Input password is incorrect');
         res.send('Incorrect password'); // Send error message
     }
 });

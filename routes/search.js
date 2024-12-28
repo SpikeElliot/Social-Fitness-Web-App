@@ -16,11 +16,14 @@ router.get('/search/posts', searchValidation, redirectLogin, (req, res, next) =>
     let newRecord = [req.session.user.id, req.query.searchtext];
     let sqlQuery = `CALL pr_searchedposts(?,?);`; // Search posts procedure
     // Query database to find posts containing search term
+    console.log('----------------------------------------');
+    console.log(`Searching for posts containing: "${req.query.searchtext}"...`);
     db.query(sqlQuery, newRecord, searchPosts);
 
     function searchPosts(err, result) {
         if (err) next(err); // Move to next middleware function
         // Create newData object to use in EJS view
+        console.log('Result: All matching posts found successfully');
         let newData = {user: req.session.user, 
                        searchtext: req.query.searchtext,
                        posts: result[0]};
