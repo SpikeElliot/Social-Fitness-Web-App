@@ -1,0 +1,27 @@
+.activitiesPageHeader {
+    display: inline-block;
+    width: max-content;
+    margin: 40px auto 20px auto;
+    position: relative;
+    left: 25%;
+}
+
+.refreshButton {
+    position: relative;
+    width: 10%;
+    height: max-content;
+    padding: 10px;
+    border: none;
+    border-radius: 20px;
+    margin-top: 32px;
+    background-color: rgb(85, 120, 224);
+    transition: background-color 250ms;
+    color: white;
+    font-size: 16px;
+    float: right;
+    right: 25%;
+}
+
+.refreshButton:hover {
+    background-color: rgb(58, 88, 177);
+}

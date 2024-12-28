@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Your Activities - <%=appData.appName%> </title>
+        <link rel="icon" type="image/x-icon" href="/assets/fitterlogo.png">
+        <link rel="stylesheet" type="text/css" href="/main.css"/>
+        <link rel="stylesheet" type="text/css" href="/activities.css"/>
+        <script src="/script.js"></script> 
+    </head>
+    <body>
+        <div class="contentBackground"></div>
+        <!-- Header w/ search bar -->
+        <div class="headerContainer">
+            <div class="header">
+                <a href="/"><h1><%=appData.appName%></h1></a>
+                <form class="searchbar" method="GET" action="/search/posts">
+                    <input id="searchBox" type="text" name="searchtext" placeholder="Search for posts, users, or activities...">
+                    <input type="submit" value="Search">
+                </form>
+            </div>
+            <div class="headerDropdown">
+                <button class="headerDropdownButton"><%=user.username%></button>
+                <div class="headerDropdownMenu">
+                    <a href="/profile/<%=user.username%>">Your Profile</a>
+                    <a href="/settings">Account Settings</a>
+                    <a href="/logout">Log Out</a>
+                </div>
+            </div>
+        </div>
+        <h2 class="activitiesPageHeader">All Activities (<%=activities.length%>):</h2>
+        <a href="/getactivities"><button class="refreshButton">Refresh Activities</button></a>
+        <div class="pageDivider"></div>
+        <div class="navbar">
+            <a href="/">Home</a>
+            <a href="/profile/<%=user.username%>">Profile</a>
+            <a href="/profile/<%=user.username%>/likedposts">Likes</a>
+            <a href="/activities">Activities</a>
+            <a href="/help">Help</a>
+        </div>
+        <!-- For loop iterates through activities array -->
+        <% for (a of activities) { %>
+        <div class="postContainer">
+            <div class="postDiv">
+                <h2><%=a.name%> - <%=a.start_date.toLocaleString()%></h2>
+                <div class="postBodyDiv">
+                    <p>Total Time: <%=a.elapsed_time%></p>
+                    <% if (a.distance)  { %>
+                        <p>Distance: <%=(a.distance/1000).toPrecision(3)%>km</p>
+                    <% } %> 
+                    <% if (a.calories)  { %> 
+                        <p>Calories: <%=a.calories%>kJ</p>
+                    <% } %> 
+                    <% if (a.average_speed)  { %> 
+                        <p>Avg Speed: <%=a.average_speed.toPrecision(3)%>m/s</p>
+                        
+                    <% } %> 
+                    <% if (a.max_speed) { %> 
+                        <p>Max Speed: <%=a.max_speed.toPrecision(3)%>m/s</p>
+                        <p>Avg Pace: <%=a.average_pace%></p>
+                        <p>Max Pace: <%=a.max_pace%></p>
+                    <% } %> 
+                    <% if (a.average_watts) { %> 
+                        <p>Avg Watts: <%=a.average_watts.toPrecision(3)%>W</p> 
+                    <% } %> 
+                    <% if (a.max_watts) { %> 
+                        <p>Max Watts: <%=a.max_watts.toPrecision(3)%>W</p>
+                    <% } %> 
+                </div>
+            </div>
+        </div>
+        <% } %>
+        <footer>
+            <p>Uicons by <a href="https://www.flaticon.com/uicons" title="Uicons">Flaticon</a></p>
+            <p>Fast icons created by <a href="https://www.flaticon.com/free-icons/fast" title="Fast icons">srip - Flaticon</a></p>
+        </footer>
+    </body>
+</html>

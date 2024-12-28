@@ -8,7 +8,7 @@ router.get('/post/:id', redirectLogin, (req, res, next) => {
     let newData = {}; // Create newData object for post data to use in EJS
     newData.error = false; // Initialise error (when no result found) as false
     let newRecord = [req.params.id, req.session.user.id];
-    let sqlQuery = `CALL pr_postinfo(?,?);`; // Get post data procedure
+    let sqlQuery = `CALL pr_postinfo(?,?);`;
     // Get necessary post data for post matching ID parameter
     console.log('----------------------------------------');
     console.log(`Getting post (ID: ${req.params.id})...`);
@@ -26,17 +26,17 @@ router.get('/post/:id', redirectLogin, (req, res, next) => {
             return res.render('post.ejs', newData);
         }
         // Case: Matching post ID found
-        newData.user = req.session.user; // Update newData object with post data
+        newData.user = req.session.user; 
         newData.post = result[0][0];
         newRecord = [newData.post.post_id, newData.user.id];
-        sqlQuery = `CALL pr_postcomments(?,?);`; // Get all post comments procedure
+        sqlQuery = `CALL pr_postcomments(?,?);`;
         // Query database for comments matching post's post_id
         console.log('Getting all comments on post...');
         db.query(sqlQuery, newRecord, getComments);  
     }
 
     function getComments(err, result) {
-        if (err) { // Handle MySQL Errors
+        if (err) {
             console.error(err.message);
             return res.redirect('/');
         }
@@ -57,7 +57,7 @@ router.post('/commented', commentValidation, (req, res, next) => {
         return res.redirect('/');
     }
     let newRecord = [req.body.user_id, req.body.post_id, req.body.content];
-    let sqlQuery = `CALL pr_makecomment(?,?,?);`; // Insert comment data procedure
+    let sqlQuery = `CALL pr_makecomment(?,?,?);`;
     // Add new comment linked to post and user in database
     console.log('----------------------------------------');
     console.log('Saving comment to database...');

@@ -40,7 +40,7 @@ router.get('/exchange_token', redirectLogin, (req, res, next) => {
         } else {
             console.log('Result: Strava user data saved to database');
         }
-        res.redirect('/');
+        res.redirect('/getactivities');
     }
 
     exchangeToken();

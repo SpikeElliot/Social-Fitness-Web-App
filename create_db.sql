@@ -309,6 +309,21 @@ END$$
 DELIMITER ;
 
 -- -----------------------------------------------------
+-- procedure pr_getactivities
+-- -----------------------------------------------------
+
+DELIMITER $$
+USE `fitter`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `pr_getactivities`(session_user_id INT)
+BEGIN
+	SELECT name, start_date, elapsed_time, calories, distance, average_speed, average_watts, max_speed, max_watts
+    FROM activity
+    WHERE user_id = session_user_id ORDER BY strava_id DESC;
+END$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
 -- procedure pr_getlastactivity
 -- -----------------------------------------------------
 

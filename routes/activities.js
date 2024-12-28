@@ -20,7 +20,7 @@ router.get('/getactivities', redirectLogin, (req, res, next) => {
         accessToken = result[0][0].access_token;
         // Case: no access token stored in database
         if (accessToken == null) {
-            return res.send('No Strava account connected');
+            return res.redirect(`/profile/${req.session.user.username}`);
         }
 
         const expiration = result[0][0].token_expiration;
@@ -193,6 +193,56 @@ router.get('/getactivities', redirectLogin, (req, res, next) => {
         // TO DO: Create activities page that displays all saved in database
         console.log('Result: New activities saved');
         res.redirect('/activities');
+    }
+})
+
+router.get('/activities', redirectLogin, (req, res, next) => {
+    let newRecord = [req.session.user.id];
+    let sqlQuery = `CALL pr_getactivities(?);`;
+    console.log('----------------------------------------');
+    console.log(`Getting user ${req.session.user.id} activities...`);
+    db.query(sqlQuery, newRecord, getUserActivities);
+    
+    function getUserActivities(err, result) {
+        if (err) {
+            console.error(err.message);
+            return res.redirect('/');
+        }
+        // Case: user activities found successfully
+        console.log('Result: Activities found successfully');
+        let newData = {};
+        newData.user = req.session.user;
+        newData.activities = result[0];
+        for (let i = 0; i < newData.activities.length; i++) {
+            // Convert elapsed_time to correct format
+            let convertedTime = timeConvert(newData.activities[i].elapsed_time);
+            newData.activities[i].elapsed_time = convertedTime;
+
+            // Find paces from speeds
+            if (newData.activities[i].average_speed) {
+                let average_pace = Math.floor(1000/newData.activities[i].average_speed);
+                let max_pace = Math.floor(1000/newData.activities[i].max_speed);
+                // Convert paces to correct fromat
+                newData.activities[i].average_pace = timeConvert(average_pace);
+                newData.activities[i].max_pace = timeConvert(max_pace);
+            }
+
+        }
+        res.render('activities.ejs', newData);
+    }
+
+    // Take a time in seconds and convert to necessary format
+    function timeConvert(duration) {
+        let hrs = Math.floor(duration/3600);
+        let mins = Math.floor((duration - hrs*3600)/60);
+        let secs = (duration%60);
+        
+        let timeString = '';
+        if (hrs != 0) timeString += `${hrs} hours `;
+        if (mins != 0) timeString += `${mins} mins `;
+        timeString += `${secs} secs`;
+
+        return timeString;
     }
 })
 
