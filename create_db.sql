@@ -96,7 +96,7 @@ CREATE TABLE IF NOT EXISTS `fitter`.`post` (
     REFERENCES `fitter`.`user` (`user_id`)
     ON DELETE CASCADE)
 ENGINE = InnoDB
-AUTO_INCREMENT = 40
+AUTO_INCREMENT = 41
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -123,7 +123,7 @@ CREATE TABLE IF NOT EXISTS `fitter`.`comment` (
     REFERENCES `fitter`.`post` (`post_id`)
     ON DELETE CASCADE)
 ENGINE = InnoDB
-AUTO_INCREMENT = 17
+AUTO_INCREMENT = 21
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -195,7 +195,35 @@ USE `fitter` ;
 -- -----------------------------------------------------
 -- Placeholder table for view `fitter`.`vw_allpostinfo`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `fitter`.`vw_allpostinfo` (`post_id` INT, `body` INT, `date_posted` INT, `like_count` INT, `comment_count` INT, `username` INT);
+CREATE TABLE IF NOT EXISTS `fitter`.`vw_allpostinfo` (`post_id` INT, `activity_id` INT, `body` INT, `date_posted` INT, `like_count` INT, `comment_count` INT, `username` INT, `name` INT, `start_date` INT, `elapsed_time` INT, `calories` INT, `distance` INT, `average_speed` INT, `average_watts` INT, `max_speed` INT, `max_watts` INT);
+
+-- -----------------------------------------------------
+-- procedure pr_apigetposts
+-- -----------------------------------------------------
+
+DELIMITER $$
+USE `fitter`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `pr_apigetposts`()
+BEGIN
+	SELECT * FROM vw_allpostinfo ORDER BY date_posted DESC;
+END$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- procedure pr_apisearchposts
+-- -----------------------------------------------------
+
+DELIMITER $$
+USE `fitter`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `pr_apisearchposts`(search_text TEXT)
+BEGIN
+	SELECT * FROM vw_allpostinfo
+	WHERE body LIKE CONCAT('%', search_text, '%')
+	ORDER BY date_posted DESC;
+END$$
+
+DELIMITER ;
 
 -- -----------------------------------------------------
 -- procedure pr_deletecomment
@@ -287,28 +315,6 @@ END$$
 DELIMITER ;
 
 -- -----------------------------------------------------
--- procedure pr_fullprofile
--- -----------------------------------------------------
-
-DELIMITER $$
-USE `fitter`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `pr_fullprofile`(session_user_id INT, profile_username VARCHAR(64))
-BEGIN
-	CALL pr_profileinfo(profile_username, @out_date_joined, @out_follower_count, @out_following_count, @out_country, @out_city);
-    SELECT @date_joined, @follower_count, @following_count, @country, @city UNION ALL SELECT
-    post_id, body, date_posted, like_count, username,
-                    CASE 
-                        WHEN post_liked_user_id = session_user_id THEN 1
-                        ELSE 0
-                    END AS is_liked
-	FROM vw_allpostinfo
-    WHERE username = profile_username
-	ORDER BY date_posted DESC; 
-END$$
-
-DELIMITER ;
-
--- -----------------------------------------------------
 -- procedure pr_getactivities
 -- -----------------------------------------------------
 
@@ -316,7 +322,7 @@ DELIMITER $$
 USE `fitter`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `pr_getactivities`(session_user_id INT)
 BEGIN
-	SELECT activity_id, name, start_date, elapsed_time, calories, distance, average_speed, average_watts, max_speed, max_watts
+	SELECT activity_id, post_id, name, start_date, elapsed_time, calories, distance, average_speed, average_watts, max_speed, max_watts
     FROM activity
     WHERE user_id = session_user_id ORDER BY start_date DESC;
 END$$
@@ -347,7 +353,7 @@ DELIMITER $$
 USE `fitter`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `pr_getlikedposts`(session_user_id INT, profile_username VARCHAR(64))
 BEGIN
-SELECT post_id, body, date_posted, like_count, comment_count, username,
+SELECT *,
                     CASE 
                         WHEN session_user_id IN (SELECT user_id FROM post_like WHERE post_like.post_id = vw_allpostinfo.post_id)
                         THEN 1
@@ -382,7 +388,7 @@ DELIMITER $$
 USE `fitter`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `pr_indexposts`(session_user_id INT)
 BEGIN
-SELECT post_id, body, date_posted, like_count, comment_count, username,
+SELECT *,
                     CASE 
                         WHEN session_user_id IN (SELECT user_id FROM post_like WHERE post_like.post_id = vw_allpostinfo.post_id)
                         THEN 1
@@ -511,7 +517,7 @@ DELIMITER $$
 USE `fitter`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `pr_postinfo`(requested_post_id INT, session_user_id INT)
 BEGIN
-	SELECT p.post_id, p.user_id, p.body, p.date_posted, p.like_count, p.comment_count, u.username,
+	SELECT p.post_id, p.activity_id, p.user_id, p.body, p.date_posted, p.like_count, p.comment_count, u.username, a.name, a.start_date, a.elapsed_time, a.calories, a.distance, a.average_speed, a.average_watts, a.max_speed, a.max_watts,
                     CASE 
                         WHEN session_user_id IN (SELECT user_id FROM post_like WHERE post_like.post_id = requested_post_id)
                         THEN 1
@@ -523,6 +529,7 @@ BEGIN
                         ELSE 0
 					END AS is_postedByUser
 	FROM post p JOIN user u ON p.user_id = u.user_id
+    LEFT JOIN activity a ON a.activity_id = p.activity_id
     WHERE p.post_id = requested_post_id;
 END$$
 
@@ -557,7 +564,7 @@ DELIMITER $$
 USE `fitter`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `pr_profileposts`(session_user_id INT, profile_username VARCHAR(64))
 BEGIN
-SELECT post_id, body, date_posted, like_count, comment_count, username,
+SELECT *,
                     CASE 
                         WHEN session_user_id IN (SELECT user_id FROM post_like WHERE post_like.post_id = vw_allpostinfo.post_id)
                         THEN 1
@@ -593,7 +600,7 @@ DELIMITER $$
 USE `fitter`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `pr_searchedposts`(session_user_id INT, search_text VARCHAR(255))
 BEGIN
-SELECT post_id, body, date_posted, like_count, comment_count, username,
+SELECT *,
                     CASE 
                         WHEN session_user_id IN (SELECT user_id FROM post_like WHERE post_like.post_id = vw_allpostinfo.post_id)
                         THEN 1
@@ -660,7 +667,7 @@ DELIMITER ;
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `fitter`.`vw_allpostinfo`;
 USE `fitter`;
-CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `fitter`.`vw_allpostinfo` AS select `p`.`post_id` AS `post_id`,`p`.`body` AS `body`,`p`.`date_posted` AS `date_posted`,`p`.`like_count` AS `like_count`,`p`.`comment_count` AS `comment_count`,`u`.`username` AS `username` from (`fitter`.`post` `p` join `fitter`.`user` `u` on((`p`.`user_id` = `u`.`user_id`)));
+CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `fitter`.`vw_allpostinfo` AS select `p`.`post_id` AS `post_id`,`p`.`activity_id` AS `activity_id`,`p`.`body` AS `body`,`p`.`date_posted` AS `date_posted`,`p`.`like_count` AS `like_count`,`p`.`comment_count` AS `comment_count`,`u`.`username` AS `username`,`a`.`name` AS `name`,`a`.`start_date` AS `start_date`,`a`.`elapsed_time` AS `elapsed_time`,`a`.`calories` AS `calories`,`a`.`distance` AS `distance`,`a`.`average_speed` AS `average_speed`,`a`.`average_watts` AS `average_watts`,`a`.`max_speed` AS `max_speed`,`a`.`max_watts` AS `max_watts` from ((`fitter`.`post` `p` join `fitter`.`user` `u` on((`u`.`user_id` = `p`.`user_id`))) left join `fitter`.`activity` `a` on((`a`.`activity_id` = `p`.`activity_id`)));
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;

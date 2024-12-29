@@ -79,7 +79,7 @@ router.get('/profile/:username/likedposts', redirectLogin, (req, res, next) => {
         newData.profile.username = req.params.username;
         res.render('likedposts.ejs', newData)
     }
-})
+});
 
 // Export the router so index.js can access it
 module.exports = router;

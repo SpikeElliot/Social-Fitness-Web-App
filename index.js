@@ -142,5 +142,9 @@ app.use(('/exchange_token', exchangeTokenRoute));
 const activitiesRoutes = require('./routes/activities');
 app.use(('/activities', activitiesRoutes));
 
+// API routes
+const apiRoutes = require('./routes/api');
+app.use(('/api', apiRoutes));
+
 // Start the web app listening
 app.listen(port, () => console.log(`Node app listening on port: ${port}`));

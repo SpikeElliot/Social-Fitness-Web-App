@@ -270,7 +270,7 @@ a, a:hover, a:active {
     border-radius: 30px;
     padding: 20px;
     margin: 30px auto 20px auto;
-    border-top: solid rgb(85, 120, 224) 4px;
+    border-top: solid rgb(85, 120, 224) 3px;
     background-color: #DDDDDD;
     transition: background-color 250ms;
 }

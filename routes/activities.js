@@ -194,7 +194,7 @@ router.get('/getactivities', redirectLogin, (req, res, next) => {
         console.log('Result: New activities saved');
         res.redirect('/activities');
     }
-})
+});
 
 router.get('/activities', redirectLogin, (req, res, next) => {
     let newRecord = [req.session.user.id];
@@ -218,7 +218,7 @@ router.get('/activities', redirectLogin, (req, res, next) => {
         }
         res.render('activities.ejs', newData);
     }
-})
+});
 
 // Export the router so index.js can access it
 module.exports = router;

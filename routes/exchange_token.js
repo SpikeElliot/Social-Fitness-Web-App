@@ -44,7 +44,7 @@ router.get('/exchange_token', redirectLogin, (req, res, next) => {
     }
 
     exchangeToken();
-})
+});
 
 // Export the router so index.js can access it
 module.exports = router;
