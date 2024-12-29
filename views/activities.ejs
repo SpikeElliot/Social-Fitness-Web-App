@@ -14,7 +14,7 @@
             <div class="header">
                 <a href="/"><h1><%=appData.appName%></h1></a>
                 <form class="searchbar" method="GET" action="/search/posts">
-                    <input id="searchBox" type="text" name="searchtext" placeholder="Search for posts, users, or activities...">
+                    <input id="searchBox" type="text" name="searchtext" placeholder="Search for posts...">
                     <input type="submit" value="Search">
                 </form>
             </div>
@@ -45,25 +45,25 @@
                 <div class="postBodyDiv">
                     <p>Total Time: <%=a.elapsed_time%></p>
                     <% if (a.distance)  { %>
-                        <p>Distance: <%=(a.distance/1000).toPrecision(3)%>km</p>
+                        <p>Distance: <%=(a.distance/1000).toPrecision(3)%> km</p>
                     <% } %> 
                     <% if (a.calories)  { %> 
-                        <p>Calories: <%=a.calories%>kJ</p>
+                        <p>Calories: <%=a.calories%> kJ</p>
                     <% } %> 
                     <% if (a.average_speed)  { %> 
-                        <p>Avg Speed: <%=a.average_speed.toPrecision(3)%>m/s</p>
+                        <p>Avg Speed: <%=a.average_speed.toPrecision(3)%> m/s</p>
                         
                     <% } %> 
                     <% if (a.max_speed) { %> 
-                        <p>Max Speed: <%=a.max_speed.toPrecision(3)%>m/s</p>
+                        <p>Max Speed: <%=a.max_speed.toPrecision(3)%> m/s</p>
                         <p>Avg Pace: <%=a.average_pace%></p>
                         <p>Max Pace: <%=a.max_pace%></p>
                     <% } %> 
                     <% if (a.average_watts) { %> 
-                        <p>Avg Watts: <%=a.average_watts.toPrecision(3)%>W</p> 
+                        <p>Avg Watts: <%=a.average_watts.toPrecision(3)%> W</p> 
                     <% } %> 
                     <% if (a.max_watts) { %> 
-                        <p>Max Watts: <%=a.max_watts.toPrecision(3)%>W</p>
+                        <p>Max Watts: <%=a.max_watts.toPrecision(3)%> W</p>
                     <% } %> 
                 </div>
             </div>

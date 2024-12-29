@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS `fitter`.`activity` (
     REFERENCES `fitter`.`user` (`user_id`)
     ON DELETE CASCADE)
 ENGINE = InnoDB
-AUTO_INCREMENT = 122
+AUTO_INCREMENT = 124
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -96,7 +96,7 @@ CREATE TABLE IF NOT EXISTS `fitter`.`post` (
     REFERENCES `fitter`.`user` (`user_id`)
     ON DELETE CASCADE)
 ENGINE = InnoDB
-AUTO_INCREMENT = 33
+AUTO_INCREMENT = 40
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -316,9 +316,9 @@ DELIMITER $$
 USE `fitter`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `pr_getactivities`(session_user_id INT)
 BEGIN
-	SELECT name, start_date, elapsed_time, calories, distance, average_speed, average_watts, max_speed, max_watts
+	SELECT activity_id, name, start_date, elapsed_time, calories, distance, average_speed, average_watts, max_speed, max_watts
     FROM activity
-    WHERE user_id = session_user_id ORDER BY strava_id DESC;
+    WHERE user_id = session_user_id ORDER BY start_date DESC;
 END$$
 
 DELIMITER ;
@@ -402,7 +402,7 @@ DELIMITER $$
 USE `fitter`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `pr_login`(login_username VARCHAR(64))
 BEGIN
-SELECT hashed_password, user_id
+SELECT hashed_password, user_id, strava_id
                     FROM user 
                     WHERE username = login_username;
 END$$
@@ -449,10 +449,17 @@ DELIMITER ;
 
 DELIMITER $$
 USE `fitter`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `pr_makepost`(poster_id INT, post_text TEXT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `pr_makepost`(poster_id INT, post_text TEXT, post_activity_id INT)
 BEGIN
-	INSERT INTO post(user_id, body)
-	VALUES (poster_id, post_text);
+    
+	INSERT INTO post (user_id, body, activity_id)
+	VALUES (poster_id, post_text, post_activity_id);
+    
+    SET @PostID = LAST_INSERT_ID();
+    
+	UPDATE activity
+		SET post_id = @PostID
+		WHERE activity_id = post_activity_id;
 END$$
 
 DELIMITER ;

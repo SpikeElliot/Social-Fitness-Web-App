@@ -20,8 +20,9 @@ router.post('/loggedin', loginValidation, (req, res, next) => {
         return res.redirect('/login');
     }
     let user_id; // Initialise user_id variable in outer function scope
+    let user_strava_id;
     let newRecord = [req.body.username];
-    let sqlQuery = `CALL pr_login(?);`; // Get Login Details Procedure
+    let sqlQuery = `CALL pr_login(?);`;
     // Query database to find username matching input and get hashed pw
     console.log('----------------------------------------');
     console.log('Getting login details with matching username...');
@@ -41,6 +42,7 @@ router.post('/loggedin', loginValidation, (req, res, next) => {
         // Case: Matching username found
         let hashedPw = result[0][0].hashed_password.toString(); // Get hashed pw
         user_id = result[0][0].user_id; // Set outer scope user_id value
+        user_strava_id = result[0][0].strava_id; // Set user's strava_id
         // Compare hashed input to hashed password of user in database
         console.log('Comparing hashed input to saved password hash...');
         bcrypt.compare(req.body.password, hashedPw, matchPasswords);
@@ -52,7 +54,8 @@ router.post('/loggedin', loginValidation, (req, res, next) => {
         if (result) { // Log user in and redirect to home
             console.log('Result: Input password is correct');
             req.session.user = {id: user_id,
-                                username: req.body.username};
+                                username: req.body.username,
+                                strava_id: user_strava_id};
             return res.redirect('/');
         } 
         // Case: Passwords do not match

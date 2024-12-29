@@ -6,8 +6,9 @@ const router = express.Router(); // Create a router object
 
 router.get('/', redirectLogin, (req, res, next) => {
     // TO DO: Make feed customised based on user location, preferences, etc.
+    let newData;
     let newRecord = [req.session.user.id];
-    let sqlQuery = `CALL pr_indexposts(?);`; // Get home posts procedure
+    let sqlQuery = `CALL pr_indexposts(?);`;
     // Query database to find posts containing search term
     console.log('----------------------------------------');
     console.log('Getting all posts...');
@@ -16,11 +17,46 @@ router.get('/', redirectLogin, (req, res, next) => {
     function getHomePosts(err, result) {
         if (err) return console.error(err.message);
         // Case: all posts successfully selected
-        console.log('Result: All posts found successfully');
+        
         // Create newData object to use in EJS view
-        let newData = {user: req.session.user, 
+        newData = {user: req.session.user, 
                        searchtext: req.query.searchtext,
-                       posts: result[0]};
+                       posts: result[0],
+                       activities: null};
+        // Case: user has a connected Strava account
+        if (req.session.user.strava_id) {
+            // Get all user's activities from database
+            sqlQuery = `CALL pr_getactivities(?);`;
+            console.log(`Getting user ${req.session.user.id} activities for home page...`);
+            db.query(sqlQuery, newRecord, getHomeActivities);
+        } else {
+            // Case: no connected Strava account
+            console.log('Result: All posts found successfully');
+            res.render('index.ejs', newData);
+        }
+    }
+
+    function getHomeActivities(err, result) {
+        if (!err) { // Case: all activities found
+            console.log('Result: Activities found successfully');
+            newData.activities = result[0];
+            for (let i = 0; i < newData.activities.length; i++) {
+                // Convert elapsed_time to correct format
+                let convertedTime = timeConvert(newData.activities[i].elapsed_time);
+                newData.activities[i].elapsed_time = convertedTime;
+
+                // Find paces from speeds
+                if (newData.activities[i].average_speed) {
+                    let average_pace = Math.floor(1000/newData.activities[i].average_speed);
+                    let max_pace = Math.floor(1000/newData.activities[i].max_speed);
+                    // Convert paces to correct fromat
+                    newData.activities[i].average_pace = timeConvert(average_pace);
+                    newData.activities[i].max_pace = timeConvert(max_pace);
+                }
+            }
+        } else { // Case: error getting activities
+            console.error(err.message);
+        }
         res.render('index.ejs', newData);
     }
 });
@@ -34,8 +70,13 @@ router.post('/posted', postValidation, (req, res, next) => {
         // TO DO: Eventually add error message to give user without reloading page
         return res.redirect('/');
     }
-    let newRecord = [req.body.userid, req.body.content];
-    let sqlQuery = `CALL pr_makepost(?,?)`; // Insert post data procedure
+    // If no activity selected, set ID to null for database
+    if (req.body.activity == "none") {
+        req.body.activity = null;
+        console.log(req.body.activity);
+    }
+    let newRecord = [req.body.userid, req.body.content, req.body.activity];
+    let sqlQuery = `CALL pr_makepost(?,?,?);`;
     // Add new post to database
     console.log('----------------------------------------');
     console.log('Saving new post to database...');

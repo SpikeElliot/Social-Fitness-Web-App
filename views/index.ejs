@@ -13,7 +13,7 @@
             <div class="header">
                 <a href="/"><h1><%=appData.appName%></h1></a>
                 <form class="searchbar" method="GET" action="/search/posts">
-                    <input id="searchBox" type="text" name="searchtext" placeholder="Search for posts, users, or activities...">
+                    <input id="searchBox" type="text" name="searchtext" placeholder="Search for posts...">
                     <input type="submit" value="Search">
                 </form>
             </div>
@@ -31,7 +31,25 @@
                 <textarea class="postTextBox" type="text" name="content" onkeyup="displayTypingCharCount()" placeholder="Tell us your thoughts or share an achievement!" maxlength="255"></textarea>
                 <input type="hidden" name="userid" value=<%=user.id%>>
                 <input type="submit" value="Post">
-                <p class="postCharCount"></p>
+                <!-- Show user's activities dropdown menu if Strava account connected -->
+                <% if (activities) { %>
+                <div class="activitiesDropdown">
+                    <select name="activity">
+                        <option value="none">Link an Activity</option>
+                        <% let dateLabel = activities[0].start_date.toLocaleString().slice(0,10); %>
+                        <optgroup label="<%=dateLabel%>"></optgroup>
+                        <% for (a of activities) { %>
+                            <% let activity_date = a.start_date.toLocaleString().slice(0,10); %>
+                            <% if (activity_date != dateLabel) { %>
+                                <% dateLabel = activity_date %>
+                                <optgroup label="<%=dateLabel%>"></optgroup>
+                            <% } %>
+                            <option value="<%=a.activity_id%>"><%=a.start_date.toLocaleString().slice(11)%> - <%=a.name%></option>
+                        <% } %>
+                    </select> 
+                    <% } %>
+                    <p class="postCharCount"></p>
+                </div>
             </form>
         </div>
         <div class="pageDivider"></div>

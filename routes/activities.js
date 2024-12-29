@@ -226,23 +226,8 @@ router.get('/activities', redirectLogin, (req, res, next) => {
                 newData.activities[i].average_pace = timeConvert(average_pace);
                 newData.activities[i].max_pace = timeConvert(max_pace);
             }
-
         }
         res.render('activities.ejs', newData);
-    }
-
-    // Take a time in seconds and convert to necessary format
-    function timeConvert(duration) {
-        let hrs = Math.floor(duration/3600);
-        let mins = Math.floor((duration - hrs*3600)/60);
-        let secs = (duration%60);
-        
-        let timeString = '';
-        if (hrs != 0) timeString += `${hrs} hours `;
-        if (mins != 0) timeString += `${mins} mins `;
-        timeString += `${secs} secs`;
-
-        return timeString;
     }
 })
 

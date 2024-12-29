@@ -47,8 +47,7 @@ global.db = db; // Set global database variable
 app.use(session({
     secret: 'paperpadlock',
     resave: false,
-    saveUninitialized: false,
-    cookie: {expires: 600000}
+    saveUninitialized: false
 }));
 
 // Redirects user to home page when user logged in
@@ -69,9 +68,24 @@ const redirectLogin = (req, res, next) => {
     }
 };
 
-// Set global redirect functions
+// Take a time in seconds and convert to necessary format
+const timeConvert = duration => {
+    let hrs = Math.floor(duration/3600);
+    let mins = Math.floor((duration - hrs*3600)/60);
+    let secs = (duration%60);
+    
+    let timeString = '';
+    if (hrs != 0) timeString += `${hrs} hours `;
+    if (mins != 0) timeString += `${mins} mins `;
+    timeString += `${secs} secs`;
+
+    return timeString;
+};
+
+// Set global functions
 global.redirectHome = redirectHome;
 global.redirectLogin = redirectLogin;
+global.timeConvert = timeConvert;
 
 // Load the route handlers
 

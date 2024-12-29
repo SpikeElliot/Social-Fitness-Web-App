@@ -334,6 +334,34 @@ a, a:hover, a:active {
     background-color: rgb(58, 88, 177);
 }
 
+.activitiesDropdown {
+    position: relative;
+    display: inline-block;
+    left: 20px; 
+    text-align-last: center;
+}
+
+.activitiesDropdown select {
+    border: none;
+    border-radius: 20px;
+    padding: 10px;
+    background-color: rgb(85, 120, 224);
+    transition: background-color 250ms;
+    color: white;
+    font-size: 16px;
+}
+
+.activitiesDropdown select:hover {
+    background-color: rgb(58, 88, 177);
+}
+
+.activitiesDropdown option, .activitiesDropdown optgroup {
+    background-color: #F1F1F1;
+    color: black;
+    font-size: 16px;
+    border: none;
+}
+
 .postCharCount {
     position: relative;
     display: none;
@@ -341,6 +369,7 @@ a, a:hover, a:active {
     margin-top: 20px;
     margin-bottom: 0;
     padding-left: 15px;
+    color: #de1e1e;
 }
 
 /* Styling for border divider between sections on pages */
