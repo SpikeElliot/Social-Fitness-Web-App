@@ -30,7 +30,8 @@
                 <button class="headerDropdownButton"><%=user.username%></button>
                 <div class="headerDropdownMenu">
                     <a href="/profile/<%=user.username%>">Your Profile</a>
-                    <a href="/settings">Account Settings</a>
+                    <% let url = `https://www.strava.com/oauth/authorize?client_id=${clientId}&response_type=code&redirect_uri=http://localhost:8000/exchange_token&approval_prompt=force&scope=read_all,activity:read_all`%>
+                    <a href=<%=url%>>Connect to Strava</a>
                     <a href="/logout">Log Out</a>
                 </div>
             </div>
@@ -40,7 +41,7 @@
             <a href="/profile/<%=user.username%>">Profile</a>
             <a href="/profile/<%=user.username%>/likedposts">Likes</a>
             <a href="/activities">Activities</a>
-            <a href="/help">Help</a>
+            <a href="<%=url%>">Connect</a>
         </div>
         <!-- Another check that user profile exists to prevent errors -->
         <div class="userInfoDiv">
@@ -68,13 +69,12 @@
                 </form>
                 <% } %>
             <div class="followInfoDiv">
-                <h2><a href="<%=profile.username%>/followers"><%=profile.follower_count%> Followers</a></h2>
-                <h2><a class="infoCount" href="<%=profile.username%>/following"><%=profile.following_count%> Following</a></h2>
+                <h2><a href="/profile/<%=profile.username%>"><%=profile.follower_count%> Followers</a></h2>
+                <h2><a class="infoCount" href="/profile/<%=profile.username%>"><%=profile.following_count%> Following</a></h2>
                 <h2><a class="infoCount" href=""><%=posts.length%> Posts</a></h2>
                 <h2><a class="infoCount" href="/profile/<%=profile.username%>/likedposts"><%=profile.post_like_count%> Likes</a></h2>
             </div>
             <% if (profile.user_id == user.id && profile.strava_id == null) { %>
-                <% let url = `https://www.strava.com/oauth/authorize?client_id=${clientId}&response_type=code&redirect_uri=http://localhost:8000/exchange_token&approval_prompt=force&scope=read_all,activity:read_all`%>
                 <a href=<%=url%>>Connect your Strava account</a>
             <% } %>
             <!-- Conditionals for when user's country or city are null in database -->

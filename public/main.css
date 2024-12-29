@@ -49,7 +49,7 @@ h2 {
 }
 
 h3 {
-    font-size: 16px;
+    font-size: 18px;
 }
 
 /* Remove decoration from links */
@@ -263,6 +263,29 @@ a, a:hover, a:active {
 .postBodyDiv {
     margin: 10px;
     word-wrap: break-word;
+}
+
+.postActivityDiv {
+    position: relative;
+    border-radius: 30px;
+    padding: 20px;
+    margin: 30px auto 20px auto;
+    border-top: solid rgb(85, 120, 224) 4px;
+    background-color: #DDDDDD;
+    transition: background-color 250ms;
+}
+
+.postDiv:hover .postActivityDiv {
+    background-color: #CCCCCC;
+}
+
+.postActivityDiv h3, .postActivityDiv p {
+    left: 10px;
+}
+
+.postActivityDiv h3 {
+    font-size: 18px;
+    color: rgb(85, 120, 224);
 }
 
 .postLikeButton {

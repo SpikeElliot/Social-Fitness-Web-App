@@ -44,6 +44,11 @@ router.get('/profile/:username', redirectLogin, (req, res, next) => {
         }
         console.log('Result: All user profile data found successfully');
         newData.posts = result[0]; // Update newData object with user's posts
+        // Formatting for posts' linked activity data
+        for (let i = 0; i < newData.posts.length; i++) {
+            // Check post has a linked activity
+            if (newData.posts[i].activity_id) formatActivity(newData.posts[i]);
+        }
         res.render('profile.ejs', newData);
     }
 });
@@ -64,6 +69,11 @@ router.get('/profile/:username/likedposts', redirectLogin, (req, res, next) => {
         console.log('Result: Liked posts found successfully');
         let newData = {};
         newData.posts = result[0];
+        // Formatting for posts' linked activity data
+        for (let i = 0; i < newData.posts.length; i++) {
+            // Check post has a linked activity
+            if (newData.posts[i].activity_id) formatActivity(newData.posts[i]);
+        }
         newData.user = req.session.user;
         newData.profile = {};
         newData.profile.username = req.params.username;

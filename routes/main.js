@@ -23,6 +23,13 @@ router.get('/', redirectLogin, (req, res, next) => {
                        searchtext: req.query.searchtext,
                        posts: result[0],
                        activities: null};
+
+        // Formatting for posts' linked activity data
+        for (let i = 0; i < newData.posts.length; i++) {
+            // Check post has a linked activity
+            if (newData.posts[i].activity_id) formatActivity(newData.posts[i]);
+        }
+
         // Case: user has a connected Strava account
         if (req.session.user.strava_id) {
             // Get all user's activities from database
@@ -38,22 +45,8 @@ router.get('/', redirectLogin, (req, res, next) => {
 
     function getHomeActivities(err, result) {
         if (!err) { // Case: all activities found
-            console.log('Result: Activities found successfully');
+            console.log('Result: All posts and activities found successfully');
             newData.activities = result[0];
-            for (let i = 0; i < newData.activities.length; i++) {
-                // Convert elapsed_time to correct format
-                let convertedTime = timeConvert(newData.activities[i].elapsed_time);
-                newData.activities[i].elapsed_time = convertedTime;
-
-                // Find paces from speeds
-                if (newData.activities[i].average_speed) {
-                    let average_pace = Math.floor(1000/newData.activities[i].average_speed);
-                    let max_pace = Math.floor(1000/newData.activities[i].max_speed);
-                    // Convert paces to correct fromat
-                    newData.activities[i].average_pace = timeConvert(average_pace);
-                    newData.activities[i].max_pace = timeConvert(max_pace);
-                }
-            }
         } else { // Case: error getting activities
             console.error(err.message);
         }

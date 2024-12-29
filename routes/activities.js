@@ -214,18 +214,7 @@ router.get('/activities', redirectLogin, (req, res, next) => {
         newData.user = req.session.user;
         newData.activities = result[0];
         for (let i = 0; i < newData.activities.length; i++) {
-            // Convert elapsed_time to correct format
-            let convertedTime = timeConvert(newData.activities[i].elapsed_time);
-            newData.activities[i].elapsed_time = convertedTime;
-
-            // Find paces from speeds
-            if (newData.activities[i].average_speed) {
-                let average_pace = Math.floor(1000/newData.activities[i].average_speed);
-                let max_pace = Math.floor(1000/newData.activities[i].max_speed);
-                // Convert paces to correct fromat
-                newData.activities[i].average_pace = timeConvert(average_pace);
-                newData.activities[i].max_pace = timeConvert(max_pace);
-            }
+            formatActivity(newData.activities[i]);
         }
         res.render('activities.ejs', newData);
     }

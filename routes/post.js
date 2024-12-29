@@ -28,6 +28,10 @@ router.get('/post/:id', redirectLogin, (req, res, next) => {
         // Case: Matching post ID found
         newData.user = req.session.user; 
         newData.post = result[0][0];
+
+        // Check post has a linked activity
+        if (newData.post.activity_id) formatActivity(newData.post);
+
         newRecord = [newData.post.post_id, newData.user.id];
         sqlQuery = `CALL pr_postcomments(?,?);`;
         // Query database for comments matching post's post_id
@@ -164,7 +168,7 @@ router.post('/commentdeleted', (req, res, next) => {
 });
 
 router.post('/postdeleted', (req, res, next) => {
-    let newRecord = [req.body.postID, req.body.userID];
+    let newRecord = [req.body.postID, req.session.user.id];
     let sqlQuery = `CALL pr_deletepost(?,?)`; // Delete post procedure
     // Delete post row in database matching post_id
     console.log('----------------------------------------');

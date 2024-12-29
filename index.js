@@ -82,10 +82,27 @@ const timeConvert = duration => {
     return timeString;
 };
 
+// Formatting for posts' linked activity data
+const formatActivity = a => {
+    // Convert elapsed_time to correct format
+    let convertedTime = timeConvert(a.elapsed_time);
+    a.elapsed_time = convertedTime;
+
+    // Find paces from speeds
+    if (a.average_speed) {
+        let average_pace = Math.floor(1000/a.average_speed);
+        let max_pace = Math.floor(1000/a.max_speed);
+        // Convert paces to correct format
+        a.average_pace = timeConvert(average_pace);
+        a.max_pace = timeConvert(max_pace);
+    }
+};
+
 // Set global functions
 global.redirectHome = redirectHome;
 global.redirectLogin = redirectLogin;
 global.timeConvert = timeConvert;
+global.formatActivity = formatActivity;
 
 // Load the route handlers
 

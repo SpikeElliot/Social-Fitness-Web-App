@@ -21,7 +21,8 @@
                 <button class="headerDropdownButton"><%=user.username%></button>
                 <div class="headerDropdownMenu">
                     <a href="/profile/<%=user.username%>">Your Profile</a>
-                    <a href="/settings">Account Settings</a>
+                    <% let url = `https://www.strava.com/oauth/authorize?client_id=${clientId}&response_type=code&redirect_uri=http://localhost:8000/exchange_token&approval_prompt=force&scope=read_all,activity:read_all`%>
+                    <a href=<%=url%>>Connect to Strava</a>
                     <a href="/logout">Log Out</a>
                 </div>
             </div>
@@ -33,7 +34,7 @@
             <a href="/profile/<%=user.username%>">Profile</a>
             <a href="/profile/<%=user.username%>/likedposts">Likes</a>
             <a href="/activities">Activities</a>
-            <a href="/help">Help</a>
+            <a href="<%=url%>">Connect</a>
         </div>
         <!-- For loop iterates through posts array -->
         <% for (p of posts) { %>

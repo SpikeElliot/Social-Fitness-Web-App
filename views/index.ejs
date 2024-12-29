@@ -21,7 +21,8 @@
                 <button class="headerDropdownButton"><%=user.username%></button>
                 <div class="headerDropdownMenu">
                     <a href="/profile/<%=user.username%>">Your Profile</a>
-                    <a href="/settings">Account Settings</a>
+                    <% let url = `https://www.strava.com/oauth/authorize?client_id=${clientId}&response_type=code&redirect_uri=http://localhost:8000/exchange_token&approval_prompt=force&scope=read_all,activity:read_all`%>
+                    <a href=<%=url%>>Connect to Strava</a>
                     <a href="/logout">Log Out</a>
                 </div>
             </div>
@@ -36,15 +37,18 @@
                 <div class="activitiesDropdown">
                     <select name="activity">
                         <option value="none">Link an Activity</option>
-                        <% let dateLabel = activities[0].start_date.toLocaleString().slice(0,10); %>
-                        <optgroup label="<%=dateLabel%>"></optgroup>
+                        <!-- Group labels by date -->
+                        <% let dateLabel; %>
                         <% for (a of activities) { %>
-                            <% let activity_date = a.start_date.toLocaleString().slice(0,10); %>
-                            <% if (activity_date != dateLabel) { %>
-                                <% dateLabel = activity_date %>
-                                <optgroup label="<%=dateLabel%>"></optgroup>
+                            <!-- Only show activity if not linked to a post -->
+                            <% if (!a.post_id) { %>
+                                <% let activity_date = a.start_date.toLocaleString().slice(0,10); %>
+                                <% if (activity_date != dateLabel) { %>
+                                    <% dateLabel = activity_date %>
+                                    <optgroup label="<%=dateLabel%>"></optgroup>
+                                <% } %>
+                                <option value="<%=a.activity_id%>"><%=a.start_date.toLocaleString().slice(11)%> - <%=a.name%></option>
                             <% } %>
-                            <option value="<%=a.activity_id%>"><%=a.start_date.toLocaleString().slice(11)%> - <%=a.name%></option>
                         <% } %>
                     </select> 
                     <% } %>
@@ -58,7 +62,7 @@
             <a href="/profile/<%=user.username%>">Profile</a>
             <a href="/profile/<%=user.username%>/likedposts">Likes</a>
             <a href="/activities">Activities</a>
-            <a href="/help">Help</a>
+            <a href="<%=url%>">Connect</a>
         </div>
         <% if (posts) { %>
             <!-- For loop iterates through posts array -->
@@ -68,6 +72,36 @@
                         <div class="postDiv">
                             <h2><%=p.username%></h2>
                             <div class="postBodyDiv"><%=p.body%></div>
+
+                            <!-- Embedded activity data if post has linked activity -->
+                            <% if (p.activity_id) { %>
+                                <div class="postActivityDiv">
+                                    <h3><%=p.name%> - <%=p.start_date.toLocaleString()%></h3>
+                                    <p>Total Time: <%=p.elapsed_time%></p>
+                                    <% if (p.distance)  { %>
+                                        <p>Distance: <%=(p.distance/1000).toPrecision(3)%> km</p>
+                                    <% } %> 
+                                    <% if (p.calories)  { %> 
+                                        <p>Calories: <%=p.calories%> kJ</p>
+                                    <% } %> 
+                                    <% if (p.average_speed)  { %> 
+                                        <p>Avg Speed: <%=p.average_speed.toPrecision(3)%> m/s</p>
+                                        
+                                    <% } %> 
+                                    <% if (p.max_speed) { %> 
+                                        <p>Max Speed: <%=p.max_speed.toPrecision(3)%> m/s</p>
+                                        <p>Avg Pace: <%=p.average_pace%></p>
+                                        <p>Max Pace: <%=p.max_pace%></p>
+                                    <% } %> 
+                                    <% if (p.average_watts) { %> 
+                                        <p>Avg Watts: <%=p.average_watts.toPrecision(3)%> W</p> 
+                                    <% } %> 
+                                    <% if (p.max_watts) { %> 
+                                        <p>Max Watts: <%=p.max_watts.toPrecision(3)%> W</p>
+                                    <% } %> 
+                                </div>
+                            <% } %>
+
                             <% let postAction; %>
                             <% let postValue; %>
                             <% let postSubmitImageSrc; %>

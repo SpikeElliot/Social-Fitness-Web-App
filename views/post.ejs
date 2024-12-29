@@ -30,7 +30,8 @@
                 <button class="headerDropdownButton"><%=user.username%></button>
                 <div class="headerDropdownMenu">
                     <a href="/profile/<%=user.username%>">Your Profile</a>
-                    <a href="/settings">Account Settings</a>
+                    <% let url = `https://www.strava.com/oauth/authorize?client_id=${clientId}&response_type=code&redirect_uri=http://localhost:8000/exchange_token&approval_prompt=force&scope=read_all,activity:read_all`%>
+                    <a href=<%=url%>>Connect to Strava</a>
                     <a href="/logout">Log Out</a>
                 </div>
             </div>
@@ -40,7 +41,7 @@
             <a href="/profile/<%=user.username%>">Profile</a>
             <a href="/profile/<%=user.username%>/likedposts">Likes</a>
             <a href="/activities">Activities</a>
-            <a href="/help">Help</a>
+            <a href="<%=url%>">Connect</a>
         </div>
         <!-- Another check that post exists to prevent errors -->
         <% if (error) { %>
@@ -59,6 +60,36 @@
                     </form>
                 <% } %>
                 <div class="postBodyDiv"><%=post.body%></div>
+
+                <!-- Embedded activity data if post has linked activity -->
+                <% if (post.activity_id) { %>
+                    <div class="postActivityDiv">
+                        <h3><%=post.name%> - <%=post.start_date.toLocaleString()%></h3>
+                        <p>Total Time: <%=post.elapsed_time%></p>
+                        <% if (post.distance)  { %>
+                            <p>Distance: <%=(post.distance/1000).toPrecision(3)%> km</p>
+                        <% } %> 
+                        <% if (post.calories)  { %> 
+                            <p>Calories: <%=post.calories%> kJ</p>
+                        <% } %> 
+                        <% if (post.average_speed)  { %> 
+                            <p>Avg Speed: <%=post.average_speed.toPrecision(3)%> m/s</p>
+                            
+                        <% } %> 
+                        <% if (post.max_speed) { %> 
+                            <p>Max Speed: <%=post.max_speed.toPrecision(3)%> m/s</p>
+                            <p>Avg Pace: <%=post.average_pace%></p>
+                            <p>Max Pace: <%=post.max_pace%></p>
+                        <% } %> 
+                        <% if (post.average_watts) { %> 
+                            <p>Avg Watts: <%=post.average_watts.toPrecision(3)%> W</p> 
+                        <% } %> 
+                        <% if (post.max_watts) { %> 
+                            <p>Max Watts: <%=post.max_watts.toPrecision(3)%> W</p>
+                        <% } %> 
+                    </div>
+                <% } %>
+
                 <% let postAction; %>
                 <% let postValue; %>
                 <% let postSubmitImageSrc; %>
