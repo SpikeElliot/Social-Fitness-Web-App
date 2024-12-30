@@ -11,7 +11,7 @@ router.get('/search/posts', searchValidation, redirectLogin, (req, res, next) =>
     const errors = validationResult(req);
     if (!errors.isEmpty()) { // Handle search validation errors
         // TO DO: Eventually add error message to give user without reloading page
-        return res.redirect('/login');
+        return res.redirect(`${rootPath}/login`);
     }
     let newRecord = [req.session.user.id, req.query.searchtext];
     let sqlQuery = `CALL pr_searchedposts(?,?);`; // Search posts procedure

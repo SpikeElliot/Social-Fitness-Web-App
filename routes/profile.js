@@ -16,7 +16,7 @@ router.get('/profile/:username', redirectLogin, (req, res, next) => {
     // Query database for user profile information
     function getProfileInfo(err, result) {
         if (err) {
-            res.redirect('/');
+            res.redirect(rootPath);
             return console.error(err.message);
         }
         // Case: No matching username found (User does not exist)
@@ -39,7 +39,7 @@ router.get('/profile/:username', redirectLogin, (req, res, next) => {
     // Query database for all posts made by profile user
     function getProfilePosts(err, result) {
         if (err) { // Handle MySQL Errors
-            res.redirect('/');
+            res.redirect(rootPath);
             return console.error(err.message);
         }
         console.log('Result: All user profile data found successfully');
@@ -63,7 +63,7 @@ router.get('/profile/:username/likedposts', redirectLogin, (req, res, next) => {
     function getLikedPosts(err, result) {
         if (err) {
             console.error(err.message);
-            return res.redirect('/');
+            return res.redirect(rootPath);
         }
         // Case: liked posts found
         console.log('Result: Liked posts found successfully');

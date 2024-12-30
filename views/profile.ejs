@@ -20,8 +20,8 @@
         <!-- Header w/ search bar -->
         <div class="headerContainer">
             <div class="header">
-                <a href="/"><h1><%=appData.appName%></h1></a>
-                <form class="searchbar" method="GET" action="/search/posts">
+                <a href="<%=rootPath%>"><h1><%=appData.appName%></h1></a>
+                <form class="searchbar" method="GET" action="<%=rootPath%>/search/posts">
                     <input id="searchBox" type="text" name="searchtext" placeholder="Search for posts...">
                     <input type="submit" value="Search">
                 </form>
@@ -29,18 +29,18 @@
             <div class="headerDropdown">
                 <button class="headerDropdownButton"><%=user.username%></button>
                 <div class="headerDropdownMenu">
-                    <a href="/profile/<%=user.username%>">Your Profile</a>
+                    <a href="<%=rootPath%>/profile/<%=user.username%>">Your Profile</a>
                     <% let url = `https://www.strava.com/oauth/authorize?client_id=${clientId}&response_type=code&redirect_uri=http://localhost:8000/exchange_token&approval_prompt=force&scope=read_all,activity:read_all`%>
                     <a href=<%=url%>>Connect to Strava</a>
-                    <a href="/logout">Log Out</a>
+                    <a href="<%=rootPath%>/logout">Log Out</a>
                 </div>
             </div>
         </div>
         <div class="navbar">
-            <a href="/">Home</a>
-            <a href="/profile/<%=user.username%>">Profile</a>
-            <a href="/profile/<%=user.username%>/likedposts">Likes</a>
-            <a href="/activities">Activities</a>
+            <a href="<%=rootPath%>">Home</a>
+            <a href="<%=rootPath%>/profile/<%=user.username%>">Profile</a>
+            <a href="<%=rootPath%>/profile/<%=user.username%>/likedposts">Likes</a>
+            <a href="<%=rootPath%>/activities">Activities</a>
             <a href="<%=url%>">Connect</a>
         </div>
         <!-- Another check that user profile exists to prevent errors -->
@@ -48,9 +48,9 @@
             <% if (error) { %>
                 <h2>User does not exist!</h2>
                 <br>
-                <a href="/">Return Home</a>
+                <a href="<%=rootPath%>">Return Home</a>
             <% } else { %>
-            <h1><a href=/profile/<%=profile.username%>><%=profile.username%></a></h1>
+            <h1><a href="<%=rootPath%>/profile/<%=profile.username%>"><%=profile.username%></a></h1>
             <!-- Check if profile is session user's profile -->
             <% if (profile.user_id != user.id) { %>
                 <% let followAction; %>
@@ -63,16 +63,16 @@
                     <% postAction = "/followed"; %>
                     <% postValue = "Follow"; %>
                 <% } %>
-                <form method="POST" class="followButton" action="<%=postAction%>">
+                <form method="POST" class="followButton" action="<%=rootPath%><%=postAction%>">
                     <input type="hidden" name="followingID" value="<%=profile.user_id%>"/>
                     <input type="submit" value="<%=postValue%>"/>
                 </form>
                 <% } %>
             <div class="followInfoDiv">
-                <h2><a href="/profile/<%=profile.username%>"><%=profile.follower_count%> Followers</a></h2>
-                <h2><a class="infoCount" href="/profile/<%=profile.username%>"><%=profile.following_count%> Following</a></h2>
+                <h2><a href="<%=rootPath%>/profile/<%=profile.username%>"><%=profile.follower_count%> Followers</a></h2>
+                <h2><a class="infoCount" href="<%=rootPath%>/profile/<%=profile.username%>"><%=profile.following_count%> Following</a></h2>
                 <h2><a class="infoCount" href=""><%=posts.length%> Posts</a></h2>
-                <h2><a class="infoCount" href="/profile/<%=profile.username%>/likedposts"><%=profile.post_like_count%> Likes</a></h2>
+                <h2><a class="infoCount" href="<%=rootPath%>/profile/<%=profile.username%>/likedposts"><%=profile.post_like_count%> Likes</a></h2>
             </div>
             <% if (profile.user_id == user.id && profile.strava_id == null) { %>
                 <a href=<%=url%>>Connect your Strava account</a>
@@ -95,7 +95,7 @@
         <!-- For loop iterates through posts array -->
         <% for (p of posts) { %>
             <div class="postContainer">
-                <a href="/post/<%=p.post_id%>">
+                <a href="<%=rootPath%>/post/<%=p.post_id%>">
                     <div class="postDiv">
                         <h2><%=profile.username%></h2>
                         <div class="postBodyDiv"><%=p.body%></div>
@@ -112,7 +112,7 @@
                             <% postValue = "Like"; %>
                             <% postSubmitImageSrc = "/assets/heart.png"; %>
                         <% } %>
-                        <form method="POST" class="postLikeButton" action=<%=postAction%>>
+                        <form method="POST" class="postLikeButton" action="<%=rootPath%><%=postAction%>">
                             <input type="hidden" name="postID" value="<%=p.post_id%>"/>
                             <!-- Swap heart image when hovering (like to unlike, vice versa) -->
                             <input class="postLikeImg" type="image" src="<%=postSubmitImageSrc%>" alt="<%=postValue%>"

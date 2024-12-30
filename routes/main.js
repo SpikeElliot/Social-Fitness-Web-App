@@ -61,7 +61,7 @@ router.post('/posted', postValidation, (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) { // Handle post text validation errors
         // TO DO: Eventually add error message to give user without reloading page
-        return res.redirect('/');
+        return res.redirect(rootPath);
     }
     // If no activity selected, set ID to null for database
     if (req.body.activity == "none") {
@@ -81,7 +81,7 @@ router.post('/posted', postValidation, (req, res, next) => {
         } else {
             console.log('Result: Post successfully saved');
         }
-        res.redirect('/');
+        res.redirect(rootPath);
     }
 });
 
@@ -89,7 +89,7 @@ router.get('/logout', (req, res, next) => {
     console.log('----------------------------------------');
     console.log(`User ${req.session.user.id} logged out`);
     req.session.destroy();
-    res.redirect('/login');
+    res.redirect(`${rootPath}/login`);
 });
 
 // Export the router so index.js can access it

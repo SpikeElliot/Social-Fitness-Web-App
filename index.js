@@ -27,6 +27,10 @@ app.use(express.static(__dirname + '/public'));
 // Define application-specific data
 app.locals.appData = {appName: 'Fitter'};
 
+// Set path for absolute routing (change this when hosting on uni server)
+const rootPath = '//localhost:8000';
+global.rootPath = rootPath;
+
 // Define the database connection
 const db = mysql.createConnection ({
     host: 'localhost',
@@ -53,7 +57,7 @@ app.use(session({
 // Redirects user to home page when user logged in
 const redirectHome = (req, res, next) => {
     if (req.session.user) {
-        res.redirect('/');
+        res.redirect(rootPath);
     } else {
         next(); // Move to next middleware function
     }
@@ -62,7 +66,7 @@ const redirectHome = (req, res, next) => {
 // Redirects user to login page when user not logged in
 const redirectLogin = (req, res, next) => {
     if (!req.session.user) {
-        res.redirect('/login'); 
+        res.redirect(`${rootPath}/login`); 
     } else {
         next(); // Move to next middleware function
     }

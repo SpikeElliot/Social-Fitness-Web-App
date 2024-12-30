@@ -21,7 +21,7 @@ router.post('/registered', registerValidation, (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) { // Error handling for field registration
         // TO DO: Add error message
-        return res.redirect('/register');
+        return res.redirect(`${rootPath}/register`);
     }
     const plainPassword = req.body.password;
     // Encrypt user's password using bcrypt hashing algorithm
@@ -40,12 +40,12 @@ router.post('/registered', registerValidation, (req, res, next) => {
 
     function registerUser(err, result) {
         if (err) {
-            res.redirect('/register');
+            res.redirect(`${rootPath}/register`);
             return console.error(err.message);
         }
         // Case: No database errors
         console.log('Result: New user saved successfully');
-        res.redirect('/login'); // Send user to login page
+        res.redirect(`${rootPath}/login`); // Send user to login page
     }
 });
 

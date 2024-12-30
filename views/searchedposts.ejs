@@ -4,15 +4,15 @@
         <title><%=appData.appName%> - Search for <%=searchtext%></title>
         <link rel="icon" type="image/x-icon" href="/assets/fitterlogo.png">
         <link rel="stylesheet" type="text/css" href="/main.css"/>
-        <script src="/script.js"></script> 
+        <script src="/script.js"></script>
     </head>
     <body>
         <div class="contentBackground"></div>
         <!-- Header w/ search bar -->
         <div class="headerContainer">
             <div class="header">
-                <a href="/"><h1><%=appData.appName%></h1></a>
-                <form class="searchbar" method="GET" action="/search/posts">
+                <a href="<%=rootPath%>"><h1><%=appData.appName%></h1></a>
+                <form class="searchbar" method="GET" action="<%=rootPath%>/search/posts">
                     <input id="searchBox" type="text" name="searchtext" placeholder="Search for posts...">
                     <input type="submit" value="Search">
                 </form>
@@ -20,26 +20,26 @@
             <div class="headerDropdown">
                 <button class="headerDropdownButton"><%=user.username%></button>
                 <div class="headerDropdownMenu">
-                    <a href="/profile/<%=user.username%>">Your Profile</a>
+                    <a href="<%=rootPath%>/profile/<%=user.username%>">Your Profile</a>
                     <% let url = `https://www.strava.com/oauth/authorize?client_id=${clientId}&response_type=code&redirect_uri=http://localhost:8000/exchange_token&approval_prompt=force&scope=read_all,activity:read_all`%>
                     <a href=<%=url%>>Connect to Strava</a>
-                    <a href="/logout">Log Out</a>
+                    <a href="<%=rootPath%>/logout">Log Out</a>
                 </div>
             </div>
         </div>
         <h2 class="genericPageHeader">Results for: <%=searchtext%></h2>
         <div class="pageDivider"></div>
         <div class="navbar">
-            <a href="/">Home</a>
-            <a href="/profile/<%=user.username%>">Profile</a>
-            <a href="/profile/<%=user.username%>/likedposts">Likes</a>
-            <a href="/activities">Activities</a>
+            <a href="<%=rootPath%>">Home</a>
+            <a href="<%=rootPath%>/profile/<%=user.username%>">Profile</a>
+            <a href="<%=rootPath%>/profile/<%=user.username%>/likedposts">Likes</a>
+            <a href="<%=rootPath%>/activities">Activities</a>
             <a href="<%=url%>">Connect</a>
         </div>
         <!-- For loop iterates through posts array -->
         <% for (p of posts) { %>
         <div class="postContainer">
-            <a href="/post/<%=p.post_id%>">
+            <a href="<%=rootPath%>/post/<%=p.post_id%>">
                 <div class="postDiv">
                     <h2><%=p.username%></h2>
                     <div class="postBodyDiv"><%=p.body%></div>
@@ -56,7 +56,7 @@
                         <% postValue = "Like"; %>
                         <% postSubmitImageSrc = "/assets/heart.png"; %>
                     <% } %>
-                    <form method="POST" class="postLikeButton" action=<%=postAction%>>
+                    <form method="POST" class="postLikeButton" action="<%=rootPath%><%=postAction%>">
                         <input type="hidden" name="postID" value="<%=p.post_id%>"/>
                         <!-- Swap heart image when hovering (like to unlike, vice versa) -->
                         <input class="postLikeImg" type="image" src="<%=postSubmitImageSrc%>" alt="<%=postValue%>"

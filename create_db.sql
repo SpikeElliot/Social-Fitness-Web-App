@@ -1,9 +1,5 @@
 -- MySQL Workbench Forward Engineering
 
-SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
-SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
-SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
-
 -- -----------------------------------------------------
 -- Schema mydb
 -- -----------------------------------------------------
@@ -14,7 +10,7 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- -----------------------------------------------------
 -- Schema fitter
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `fitter` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
+CREATE SCHEMA IF NOT EXISTS `fitter`;
 USE `fitter` ;
 
 -- -----------------------------------------------------
@@ -37,11 +33,7 @@ CREATE TABLE IF NOT EXISTS `fitter`.`user` (
   `refresh_token` VARCHAR(255) NULL DEFAULT NULL,
   `strava_id` BIGINT NULL DEFAULT NULL,
   `token_expiration` BIGINT NULL DEFAULT NULL,
-  PRIMARY KEY (`user_id`))
-ENGINE = InnoDB
-AUTO_INCREMENT = 7
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
+  PRIMARY KEY (`user_id`));
 
 
 -- -----------------------------------------------------
@@ -66,11 +58,7 @@ CREATE TABLE IF NOT EXISTS `fitter`.`activity` (
   CONSTRAINT `user_id`
     FOREIGN KEY (`user_id`)
     REFERENCES `fitter`.`user` (`user_id`)
-    ON DELETE CASCADE)
-ENGINE = InnoDB
-AUTO_INCREMENT = 124
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
+    ON DELETE CASCADE);
 
 
 -- -----------------------------------------------------
@@ -94,11 +82,7 @@ CREATE TABLE IF NOT EXISTS `fitter`.`post` (
   CONSTRAINT `poster_id`
     FOREIGN KEY (`user_id`)
     REFERENCES `fitter`.`user` (`user_id`)
-    ON DELETE CASCADE)
-ENGINE = InnoDB
-AUTO_INCREMENT = 41
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
+    ON DELETE CASCADE);
 
 
 -- -----------------------------------------------------
@@ -121,11 +105,7 @@ CREATE TABLE IF NOT EXISTS `fitter`.`comment` (
   CONSTRAINT `postcommented_id`
     FOREIGN KEY (`post_id`)
     REFERENCES `fitter`.`post` (`post_id`)
-    ON DELETE CASCADE)
-ENGINE = InnoDB
-AUTO_INCREMENT = 21
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
+    ON DELETE CASCADE);
 
 
 -- -----------------------------------------------------
@@ -143,10 +123,7 @@ CREATE TABLE IF NOT EXISTS `fitter`.`comment_like` (
   CONSTRAINT `commentliker_id`
     FOREIGN KEY (`user_id`)
     REFERENCES `fitter`.`user` (`user_id`)
-    ON DELETE CASCADE)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
+    ON DELETE CASCADE);
 
 
 -- -----------------------------------------------------
@@ -164,10 +141,7 @@ CREATE TABLE IF NOT EXISTS `fitter`.`follower` (
   CONSTRAINT `following_id`
     FOREIGN KEY (`follower_id`)
     REFERENCES `fitter`.`user` (`user_id`)
-    ON DELETE CASCADE)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
+    ON DELETE CASCADE);
 
 
 -- -----------------------------------------------------
@@ -185,10 +159,7 @@ CREATE TABLE IF NOT EXISTS `fitter`.`post_like` (
   CONSTRAINT `postliked_id`
     FOREIGN KEY (`post_id`)
     REFERENCES `fitter`.`post` (`post_id`)
-    ON DELETE CASCADE)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
+    ON DELETE CASCADE);
 
 USE `fitter` ;
 
@@ -668,7 +639,3 @@ DELIMITER ;
 DROP TABLE IF EXISTS `fitter`.`vw_allpostinfo`;
 USE `fitter`;
 CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `fitter`.`vw_allpostinfo` AS select `p`.`post_id` AS `post_id`,`p`.`activity_id` AS `activity_id`,`p`.`body` AS `body`,`p`.`date_posted` AS `date_posted`,`p`.`like_count` AS `like_count`,`p`.`comment_count` AS `comment_count`,`u`.`username` AS `username`,`a`.`name` AS `name`,`a`.`start_date` AS `start_date`,`a`.`elapsed_time` AS `elapsed_time`,`a`.`calories` AS `calories`,`a`.`distance` AS `distance`,`a`.`average_speed` AS `average_speed`,`a`.`average_watts` AS `average_watts`,`a`.`max_speed` AS `max_speed`,`a`.`max_watts` AS `max_watts` from ((`fitter`.`post` `p` join `fitter`.`user` `u` on((`u`.`user_id` = `p`.`user_id`))) left join `fitter`.`activity` `a` on((`a`.`activity_id` = `p`.`activity_id`)));
-
-SET SQL_MODE=@OLD_SQL_MODE;
-SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
-SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;

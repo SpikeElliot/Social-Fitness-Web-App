@@ -14,13 +14,13 @@ router.get('/getactivities', redirectLogin, (req, res, next) => {
     function getToken(err, result) {
         if (err) {
             console.error(err.message);
-            return res.redirect('/');
+            return res.redirect(rootPath);
         }
 
         accessToken = result[0][0].access_token;
         // Case: no access token stored in database
         if (accessToken == null) {
-            return res.redirect(`/profile/${req.session.user.username}`);
+            return res.redirect(`${rootPath}/profile/${req.session.user.username}`);
         }
 
         const expiration = result[0][0].token_expiration;
@@ -66,7 +66,7 @@ router.get('/getactivities', redirectLogin, (req, res, next) => {
     function updateToken(err, result) {
         if (err) {
             console.error(err.message);
-            return res.redirect('/');
+            return res.redirect(rootPath);
         }
         // Case: no errors, proceed to fetch activity data
         getActivities();
@@ -180,19 +180,19 @@ router.get('/getactivities', redirectLogin, (req, res, next) => {
         } else {
             // Case: no new activities, send user to activities page
             console.log('Result: No new activities to save');
-            res.redirect('/activities');
+            res.redirect(`${rootPath}/activities`);
         }
     }
 
     function insertActivities(err, result) {
         if (err) {
             console.error(err.message);
-            return res.redirect('/');
+            return res.redirect(rootPath);
         }
 
         // TO DO: Create activities page that displays all saved in database
         console.log('Result: New activities saved');
-        res.redirect('/activities');
+        res.redirect(`${rootPath}/activities`);
     }
 });
 
@@ -206,7 +206,7 @@ router.get('/activities', redirectLogin, (req, res, next) => {
     function getUserActivities(err, result) {
         if (err) {
             console.error(err.message);
-            return res.redirect('/');
+            return res.redirect(rootPath);
         }
         // Case: user activities found successfully
         console.log('Result: Activities found successfully');

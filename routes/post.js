@@ -17,7 +17,7 @@ router.get('/post/:id', redirectLogin, (req, res, next) => {
     function getPost(err, result) {
         if (err) { // Handle MySQL Errors
             console.error(err.message);
-            return res.redirect('/');
+            return res.redirect(rootPath);
         }
         // Case: No matching post ID found
         if (result[0].length == 0) {
@@ -42,7 +42,7 @@ router.get('/post/:id', redirectLogin, (req, res, next) => {
     function getComments(err, result) {
         if (err) {
             console.error(err.message);
-            return res.redirect('/');
+            return res.redirect(rootPath);
         }
         console.log('Result: All comments found');
         // Update newData object with comments, render post page
@@ -58,7 +58,7 @@ router.post('/commented', commentValidation, (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) { // Handle comment text validation errors
         // TO DO: Eventually add error message to give user without redirecting
-        return res.redirect('/');
+        return res.redirect(rootPath);
     }
     let newRecord = [req.body.user_id, req.body.post_id, req.body.content];
     let sqlQuery = `CALL pr_makecomment(?,?,?);`;
@@ -73,7 +73,7 @@ router.post('/commented', commentValidation, (req, res, next) => {
         } else {
             console.log('Result: Comment successfully saved');
         } // Handle MySQL Errors
-        res.redirect(`post/${req.body.post_id}`);
+        res.redirect(`${rootPath}/post/${req.body.post_id}`);
     }
 });
 
@@ -91,7 +91,7 @@ router.post('/postliked', (req, res, next) => {
         } else {
             console.log('Result: Post like saved successfully');
         }
-        res.redirect(`post/${req.body.postID}`);
+        res.redirect(`${rootPath}/post/${req.body.postID}`);
     }
 });
 
@@ -109,7 +109,7 @@ router.post('/postunliked', (req, res, next) => {
         } else {
             console.log('Result: Post like deleted successfully');
         }
-        res.redirect(`post/${req.body.postID}`);
+        res.redirect(`${rootPath}/post/${req.body.postID}`);
     }
 });
 
@@ -127,7 +127,7 @@ router.post('/commentliked', (req, res, next) => {
         } else {
             console.log('Result: Comment like saved successfully');
         }
-        res.redirect('/');
+        res.redirect(rootPath);
     }
 });
 
@@ -145,7 +145,7 @@ router.post('/commentunliked', (req, res, next) => {
         } else {
             console.log('Result: comment like deleted successfully');
         }
-        res.redirect('/');
+        res.redirect(rootPath);
     }
 });
 
@@ -163,7 +163,7 @@ router.post('/commentdeleted', (req, res, next) => {
         } else {
             console.log('Result: Comment deleted successfully');
         }
-        res.redirect('/');
+        res.redirect(rootPath);
     }
 });
 
@@ -181,7 +181,7 @@ router.post('/postdeleted', (req, res, next) => {
         } else {
             console.log('Result: Post deleted successfully');
         }
-        res.redirect('/');
+        res.redirect(rootPath);
     }
 });
 

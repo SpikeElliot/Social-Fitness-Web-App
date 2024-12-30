@@ -17,7 +17,7 @@ router.post('/loggedin', loginValidation, (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) { // Error handling for field validation
         // TO DO: Add error message
-        return res.redirect('/login');
+        return res.redirect(`${rootPath}/login`);
     }
     let user_id; // Initialise user_id variable in outer function scope
     let user_strava_id;
@@ -30,7 +30,7 @@ router.post('/loggedin', loginValidation, (req, res, next) => {
 
     function getLoginDetails(err, result) {
         if (err) { // Handle MySQL Errors
-            res.redirect('/login');
+            res.redirect(`${rootPath}/login`);
             return console.error(err);
         }
         // Case: No matching username found
@@ -56,7 +56,7 @@ router.post('/loggedin', loginValidation, (req, res, next) => {
             req.session.user = {id: user_id,
                                 username: req.body.username,
                                 strava_id: user_strava_id};
-            return res.redirect('/');
+            return res.redirect(rootPath);
         } 
         // Case: Passwords do not match
         // TO DO: Make this cleaner and functional

@@ -17,7 +17,7 @@ router.post('/followed', (req, res, next) => {
         } else {
             console.log('Result: Follower relationship saved successfully');
         }
-        res.redirect('/');
+        res.redirect(rootPath);
     }
 });
 
@@ -35,7 +35,7 @@ router.post('/unfollowed', (req, res, next) => {
         } else {
             console.log('Result: Follower relationship deleted successfully');
         }
-        res.redirect('/');
+        res.redirect(rootPath);
     }
 });
 
