@@ -22,7 +22,7 @@
                 <button class="headerDropdownButton"><%=user.username%></button>
                 <div class="headerDropdownMenu">
                     <a href="<%=rootPath%>/profile/<%=user.username%>">Your Profile</a>
-                    <% let url = `https://www.strava.com/oauth/authorize?client_id=${clientId}&response_type=code&redirect_uri=http://localhost:8000/exchange_token&approval_prompt=force&scope=read_all,activity:read_all`%>
+                    <% let url = `https://www.strava.com/oauth/authorize?client_id=${clientId}&response_type=code&redirect_uri=${rootPath}/exchange_token&approval_prompt=force&scope=read_all,activity:read_all`%>
                     <a href=<%=url%>>Connect to Strava</a>
                     <a href="<%=rootPath%>/logout">Log Out</a>
                 </div>
