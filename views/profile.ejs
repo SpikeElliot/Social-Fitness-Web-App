@@ -89,7 +89,6 @@
             <% } %>
             <p>Location: <%=locationMsg%></p>
             <p>Date joined: <%=profile.date_joined.toLocaleString()%></p>
-            <% } %>
         </div>
         <div class="pageDivider"></div>
         <!-- For loop iterates through posts array -->
@@ -99,6 +98,36 @@
                     <div class="postDiv">
                         <h2><%=profile.username%></h2>
                         <div class="postBodyDiv"><%=p.body%></div>
+
+                        <!-- Embedded activity data if post has linked activity -->
+                        <% if (p.activity_id) { %>
+                            <div class="postActivityDiv">
+                                <h3><%=p.name%> - <%=p.start_date.toLocaleString()%></h3>
+                                <p>Total Time: <%=p.elapsed_time%></p>
+                                <% if (p.distance)  { %>
+                                    <p>Distance: <%=(p.distance/1000).toPrecision(3)%> km</p>
+                                <% } %> 
+                                <% if (p.calories)  { %> 
+                                    <p>Calories: <%=p.calories%> kJ</p>
+                                <% } %> 
+                                <% if (p.average_speed)  { %> 
+                                    <p>Avg Speed: <%=p.average_speed.toPrecision(3)%> m/s</p>
+                                    
+                                <% } %> 
+                                <% if (p.max_speed) { %> 
+                                    <p>Max Speed: <%=p.max_speed.toPrecision(3)%> m/s</p>
+                                    <p>Avg Pace: <%=p.average_pace%></p>
+                                    <p>Max Pace: <%=p.max_pace%></p>
+                                <% } %> 
+                                <% if (p.average_watts) { %> 
+                                    <p>Avg Watts: <%=p.average_watts.toPrecision(3)%> W</p> 
+                                <% } %> 
+                                <% if (p.max_watts) { %> 
+                                    <p>Max Watts: <%=p.max_watts.toPrecision(3)%> W</p>
+                                <% } %> 
+                            </div>
+                        <% } %>
+
                         <% let postAction; %>
                         <% let postValue; %>
                         <% let postSubmitImageSrc; %>
@@ -132,6 +161,7 @@
                     </div>
                 </a>
             </div>
+        <% } %>
     <% } %>
     <footer>
         <p>Uicons by <a href="https://www.flaticon.com/uicons" title="Uicons">Flaticon</a></p>
