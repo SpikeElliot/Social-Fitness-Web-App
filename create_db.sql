@@ -1,5 +1,9 @@
 -- MySQL Workbench Forward Engineering
 
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
 -- -----------------------------------------------------
 -- Schema mydb
 -- -----------------------------------------------------
@@ -54,11 +58,12 @@ CREATE TABLE IF NOT EXISTS `fitter`.`activity` (
   `max_watts` FLOAT NULL DEFAULT NULL,
   `strava_id` BIGINT NOT NULL,
   PRIMARY KEY (`activity_id`),
-  INDEX `user_id_idx` (`user_id` ASC) VISIBLE,
   CONSTRAINT `user_id`
     FOREIGN KEY (`user_id`)
     REFERENCES `fitter`.`user` (`user_id`)
     ON DELETE CASCADE);
+
+CREATE INDEX `user_id_idx` ON `fitter`.`activity` (`user_id` ASC) ;
 
 
 -- -----------------------------------------------------
@@ -73,8 +78,6 @@ CREATE TABLE IF NOT EXISTS `fitter`.`post` (
   `like_count` INT NOT NULL DEFAULT '0',
   `comment_count` INT NULL DEFAULT '0',
   PRIMARY KEY (`post_id`),
-  INDEX `user_id_idx` (`user_id` ASC) VISIBLE,
-  INDEX `activity_id_idx` (`activity_id` ASC) VISIBLE,
   CONSTRAINT `activity_id`
     FOREIGN KEY (`activity_id`)
     REFERENCES `fitter`.`activity` (`activity_id`)
@@ -83,6 +86,10 @@ CREATE TABLE IF NOT EXISTS `fitter`.`post` (
     FOREIGN KEY (`user_id`)
     REFERENCES `fitter`.`user` (`user_id`)
     ON DELETE CASCADE);
+
+CREATE INDEX `user_id_idx` ON `fitter`.`post` (`user_id` ASC) ;
+
+CREATE INDEX `activity_id_idx` ON `fitter`.`post` (`activity_id` ASC) ;
 
 
 -- -----------------------------------------------------
@@ -96,8 +103,6 @@ CREATE TABLE IF NOT EXISTS `fitter`.`comment` (
   `date_commented` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `like_count` INT NOT NULL DEFAULT '0',
   PRIMARY KEY (`comment_id`),
-  INDEX `commenter_id_idx` (`user_id` ASC) VISIBLE,
-  INDEX `postcommented_id_idx` (`post_id` ASC) VISIBLE,
   CONSTRAINT `commenter_id`
     FOREIGN KEY (`user_id`)
     REFERENCES `fitter`.`user` (`user_id`)
@@ -107,6 +112,10 @@ CREATE TABLE IF NOT EXISTS `fitter`.`comment` (
     REFERENCES `fitter`.`post` (`post_id`)
     ON DELETE CASCADE);
 
+CREATE INDEX `commenter_id_idx` ON `fitter`.`comment` (`user_id` ASC) ;
+
+CREATE INDEX `postcommented_id_idx` ON `fitter`.`comment` (`post_id` ASC) ;
+
 
 -- -----------------------------------------------------
 -- Table `fitter`.`comment_like`
@@ -114,8 +123,6 @@ CREATE TABLE IF NOT EXISTS `fitter`.`comment` (
 CREATE TABLE IF NOT EXISTS `fitter`.`comment_like` (
   `comment_id` INT NOT NULL,
   `user_id` INT NOT NULL,
-  INDEX `commentliked_id_idx` (`comment_id` ASC) VISIBLE,
-  INDEX `commentliker_id_idx` (`user_id` ASC) VISIBLE,
   CONSTRAINT `commentliked_id`
     FOREIGN KEY (`comment_id`)
     REFERENCES `fitter`.`comment` (`comment_id`)
@@ -125,6 +132,10 @@ CREATE TABLE IF NOT EXISTS `fitter`.`comment_like` (
     REFERENCES `fitter`.`user` (`user_id`)
     ON DELETE CASCADE);
 
+CREATE INDEX `commentliked_id_idx` ON `fitter`.`comment_like` (`comment_id` ASC) ;
+
+CREATE INDEX `commentliker_id_idx` ON `fitter`.`comment_like` (`user_id` ASC) ;
+
 
 -- -----------------------------------------------------
 -- Table `fitter`.`follower`
@@ -132,8 +143,6 @@ CREATE TABLE IF NOT EXISTS `fitter`.`comment_like` (
 CREATE TABLE IF NOT EXISTS `fitter`.`follower` (
   `user_id` INT NOT NULL,
   `follower_id` INT NOT NULL,
-  INDEX `follower_id_idx` (`user_id` ASC) VISIBLE,
-  INDEX `following_id_idx` (`follower_id` ASC) VISIBLE,
   CONSTRAINT `follower_id`
     FOREIGN KEY (`user_id`)
     REFERENCES `fitter`.`user` (`user_id`)
@@ -143,6 +152,10 @@ CREATE TABLE IF NOT EXISTS `fitter`.`follower` (
     REFERENCES `fitter`.`user` (`user_id`)
     ON DELETE CASCADE);
 
+CREATE INDEX `follower_id_idx` ON `fitter`.`follower` (`user_id` ASC) ;
+
+CREATE INDEX `following_id_idx` ON `fitter`.`follower` (`follower_id` ASC) ;
+
 
 -- -----------------------------------------------------
 -- Table `fitter`.`post_like`
@@ -150,8 +163,6 @@ CREATE TABLE IF NOT EXISTS `fitter`.`follower` (
 CREATE TABLE IF NOT EXISTS `fitter`.`post_like` (
   `post_id` INT NOT NULL,
   `user_id` INT NOT NULL,
-  INDEX `liker_id_idx` (`user_id` ASC) VISIBLE,
-  INDEX `postliked_id` (`post_id` ASC) VISIBLE,
   CONSTRAINT `liker_id`
     FOREIGN KEY (`user_id`)
     REFERENCES `fitter`.`user` (`user_id`)
@@ -161,12 +172,11 @@ CREATE TABLE IF NOT EXISTS `fitter`.`post_like` (
     REFERENCES `fitter`.`post` (`post_id`)
     ON DELETE CASCADE);
 
-USE `fitter` ;
+CREATE INDEX `liker_id_idx` ON `fitter`.`post_like` (`user_id` ASC) ;
 
--- -----------------------------------------------------
--- Placeholder table for view `fitter`.`vw_allpostinfo`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `fitter`.`vw_allpostinfo` (`post_id` INT, `activity_id` INT, `body` INT, `date_posted` INT, `like_count` INT, `comment_count` INT, `username` INT, `name` INT, `start_date` INT, `elapsed_time` INT, `calories` INT, `distance` INT, `average_speed` INT, `average_watts` INT, `max_speed` INT, `max_watts` INT);
+CREATE INDEX `postliked_id` ON `fitter`.`post_like` (`post_id` ASC) ;
+
+USE `fitter` ;
 
 -- -----------------------------------------------------
 -- procedure pr_apigetposts
@@ -636,6 +646,13 @@ DELIMITER ;
 -- -----------------------------------------------------
 -- View `fitter`.`vw_allpostinfo`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `fitter`.`vw_allpostinfo`;
 USE `fitter`;
 CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `fitter`.`vw_allpostinfo` AS select `p`.`post_id` AS `post_id`,`p`.`activity_id` AS `activity_id`,`p`.`body` AS `body`,`p`.`date_posted` AS `date_posted`,`p`.`like_count` AS `like_count`,`p`.`comment_count` AS `comment_count`,`u`.`username` AS `username`,`a`.`name` AS `name`,`a`.`start_date` AS `start_date`,`a`.`elapsed_time` AS `elapsed_time`,`a`.`calories` AS `calories`,`a`.`distance` AS `distance`,`a`.`average_speed` AS `average_speed`,`a`.`average_watts` AS `average_watts`,`a`.`max_speed` AS `max_speed`,`a`.`max_watts` AS `max_watts` from ((`fitter`.`post` `p` join `fitter`.`user` `u` on((`u`.`user_id` = `p`.`user_id`))) left join `fitter`.`activity` `a` on((`a`.`activity_id` = `p`.`activity_id`)));
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+-- Create the app user
+CREATE USER IF NOT EXISTS 'fitter_app'@'localhost' IDENTIFIED BY 'password'; 
+GRANT ALL PRIVILEGES ON fitter.* TO 'fitter_app'@'localhost';
