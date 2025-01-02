@@ -60,6 +60,7 @@ router.get('/getactivities', redirectLogin, (req, res, next) => {
             })
             .catch(err => {
                 console.error('Request failed,', err);
+                return res.redirect(rootPath);
             })
     }
     
@@ -127,6 +128,7 @@ router.get('/getactivities', redirectLogin, (req, res, next) => {
             })
             .catch(err => {
                 console.error('Request failed,', err);
+                return res.redirect(rootPath);
             })
     }
 

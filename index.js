@@ -22,7 +22,7 @@ app.set('view engine', 'ejs');
 app.use(express.urlencoded({extended: true}));
 
 // Set up public folder (contains css, static js, and assets)
-app.use(express.static(__dirname + '/public'));
+app.use(express.static('public'));
 
 // Define application-specific data
 app.locals.appData = {appName: 'Fitter'};

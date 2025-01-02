@@ -31,6 +31,7 @@ router.get('/exchange_token', redirectLogin, (req, res, next) => {
             })
             .catch(err => {
                 console.error('Request failed,', err);
+                return res.redirect(rootPath);
             })
     }
 
