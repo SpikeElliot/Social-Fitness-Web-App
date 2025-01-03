@@ -15,7 +15,10 @@ router.get('/', redirectLogin, (req, res, next) => {
     db.query(sqlQuery, newRecord, getHomePosts);
 
     function getHomePosts(err, result) {
-        if (err) return console.error(err.message);
+        if (err) {
+            res.redirect(rootPath);
+            return console.error(err.message);
+        }
         // Case: all posts successfully selected
         
         // Create newData object to use in EJS view

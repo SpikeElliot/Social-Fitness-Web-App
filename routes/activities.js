@@ -133,7 +133,10 @@ router.get('/getactivities', redirectLogin, (req, res, next) => {
     }
 
     function getLastActivity(err, result) {
-        if (err) return console.error(err.message);
+        if (err) {
+            res.redirect(rootPath);
+            return console.error(err.message);
+        }
 
         let activityCutoff = false;
         // Case: most recent activity found

@@ -3,6 +3,10 @@ const router = express.Router(); // Create a router object
 
 router.get('/exchange_token', redirectLogin, (req, res, next) => {
     async function exchangeToken() {
+        if (!req.query.code) {
+            res.redirect(rootPath);
+        }
+        
         console.log('----------------------------------------');
         console.log('Exchanging authorisation token for access and refresh tokens...');
         const authorizationCode = req.query.code;

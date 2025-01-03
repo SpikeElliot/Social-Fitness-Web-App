@@ -21,7 +21,10 @@ router.get('/search/posts', searchValidation, redirectLogin, (req, res, next) =>
     db.query(sqlQuery, newRecord, searchPosts);
 
     function searchPosts(err, result) {
-        if (err) next(err); // Move to next middleware function
+        if (err) {
+            console.error(err.message);
+            return res.redirect(rootPath);
+        };
         // Create newData object to use in EJS view
         console.log('Result: All matching posts found successfully');
         let newData = {user: req.session.user, 

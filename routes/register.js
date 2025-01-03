@@ -21,6 +21,7 @@ router.post('/registered', registerValidation, (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) { // Error handling for field registration
         // TO DO: Add error message
+        console.error(errors);
         return res.redirect(`${rootPath}/register`);
     }
     const plainPassword = req.body.password;
@@ -30,6 +31,10 @@ router.post('/registered', registerValidation, (req, res, next) => {
     bcrypt.hash(plainPassword, saltRounds, encryptPassword);
     
     function encryptPassword(err, hashedPassword) {
+        if (err) {
+            console.error(err.message);
+            return res.redirect(rootPath);
+        }
         let newRecord = [req.body.username, hashedPassword, req.body.firstname,
             req.body.lastname, req.body.email];
         let sqlQuery = `CALL pr_registeruser(?,?,?,?,?);`;

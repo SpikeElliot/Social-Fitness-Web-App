@@ -16,7 +16,7 @@ loginValidation = [check('username').escape().isLength({min: 3, max: 64}).matche
 router.post('/loggedin', loginValidation, (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) { // Error handling for field validation
-        // TO DO: Add error message
+        console.error(errors);
         return res.redirect(`${rootPath}/login`);
     }
     let user_id; // Initialise user_id variable in outer function scope
@@ -49,7 +49,10 @@ router.post('/loggedin', loginValidation, (req, res, next) => {
     }
 
     function matchPasswords(err, result) {
-        if (err) next(err); // Handle Bcrypt Errors
+        if (err) { // Handle Bcrypt Errors
+            console.error(err.message);
+            return res.redirect(rootPath);
+        }
         // Case: Passwords match
         if (result) { // Log user in and redirect to home
             console.log('Result: Input password is correct');
