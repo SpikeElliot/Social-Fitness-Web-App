@@ -1,17 +1,25 @@
 const express = require('express');
 const router = express.Router(); // Create a router object
 
-router.get('/exchange_token', redirectLogin, (req, res, next) => {
-    async function exchangeToken() {
-        if (!req.query.code) {
-            res.redirect(rootPath);
-        }
-        
-        console.log('----------------------------------------');
-        console.log('Exchanging authorisation token for access and refresh tokens...');
-        const authorizationCode = req.query.code;
+router.get('/strava_authorisation', (req, res, next) => {
+    if (!req.query.code) {
+        res.redirect(rootPath);
+    }
 
-        const url = `https://www.strava.com/oauth/token?client_id=${clientId}&client_secret=${clientSecret}&code=${authorizationCode}&grant_type=authorization_code`;
+    console.log('----------------------------------------');
+    console.log('Exchanging authorisation token for access and refresh tokens...');
+
+    let newData = {};
+    newData.authCode = req.query.code;
+    
+    res.render('strava_authorisation.ejs', newData);
+})
+
+router.post('/exchange_token', (req, res, next) => {
+    const code = req.body.authCode;
+
+    async function exchangeToken() {
+        const url = `https://www.strava.com/oauth/token?client_id=${clientId}&client_secret=${clientSecret}&code=${code}&grant_type=authorization_code`;
         const options = {
             method: 'POST'
         }

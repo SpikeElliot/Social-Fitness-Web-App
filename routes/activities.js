@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router(); // Create a router object
 
-router.get('/getactivities', redirectLogin, (req, res, next) => {
+router.post('/getactivities', redirectLogin, (req, res, next) => {
     let accessToken;
     let activityData = [];
     let newRecord = [req.session.user.id];

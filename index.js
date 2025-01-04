@@ -28,7 +28,7 @@ app.use(express.static('public'));
 app.locals.appData = {appName: 'Fitter'};
 
 // Set path for absolute routing (change this when hosting on uni server)
-const rootPath = '//localhost:8000';
+const rootPath = 'http://localhost:8000';
 global.rootPath = rootPath;
 
 // Define the database connection
