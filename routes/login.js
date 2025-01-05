@@ -11,14 +11,28 @@ router.get('/login', redirectHome, (req, res, next) => {
 });
 
 // Create sanitisation and validation chain for login fields
-loginValidation = [check('username').escape().isLength({min: 3, max: 64}).matches("^[a-zA-Z_.'-]+$"),
-                   check('password').escape().isLength({min: 8, max: 255})];
+loginValidation = [check('username')
+                   .trim()
+                   .escape()
+                   .isLength({min: 3, max: 64})
+                   .withMessage('Username must be between 3 and 64 characters')
+                   .bail()
+                   .matches("^[a-zA-Z_.-]+$")
+                   .withMessage('Username can only contain letters, numbers, underscores, full stops, and hyphens'),
+
+                   check('password')
+                   .trim()
+                   .escape()
+                   .isLength({min: 8, max: 255})
+                   .withMessage('Password must be between 8 and 255 characters')];
 
 router.post('/loggedin', loginValidation, (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) { // Error handling for field validation
-        console.error(errors);
-        return res.redirect(`${rootPath}/login`);
+        let errArray = errors.array();
+        let errString = "Error:\n\n";
+        for (let i = 0; i < errArray.length; i++) errString += `${errArray[i].msg} | `;
+        return res.send(errString);
     }
     let user_id; // Initialise user_id variable in outer function scope
     let user_strava_id;

@@ -11,19 +11,51 @@ router.get('/register', redirectHome, (req, res, next) => {
     res.render('register.ejs');                                                             
 });  
 
-// Create validation chains for register page fields
-registerValidation = [check('email').isEmail().isLength({max: 255}).normalizeEmail(), 
-                      check('username').escape().isLength({min: 3, max: 64}).matches("^[a-zA-Z_.'-]+$"),
-                      check('password').escape().isLength({min: 8, max: 255}),
-                      check('firstname').escape().isLength({min: 1, max: 255}).trim(),
-                      check('lastname').escape().isLength({min: 1, max: 255}).trim()];
+// Create validation chains for register form
+registerValidation = [check('username')
+                      .trim()
+                      .escape()
+                      .isLength({min: 3, max: 64})
+                      .withMessage('Username must be between 3 and 64 characters')
+                      .bail()
+                      .matches("^[a-zA-Z_.-]+$")
+                      .withMessage('Username can only contain letters, numbers, underscores, full stops, and hyphens'),
+
+                      check('password')
+                      .trim()
+                      .escape()
+                      .isLength({min: 8, max: 255})
+                      .withMessage('Password must be between 8 and 255 characters'),
+
+                      check('firstname')
+                      .trim()
+                      .escape()
+                      .isLength({min: 1, max: 255})
+                      .withMessage('First name must be between 1 and 255 characters'),
+
+                      check('lastname')
+                      .trim()
+                      .escape()
+                      .isLength({min: 1, max: 255})
+                      .withMessage('Last name must be between 1 and 255 characters'),
+                    
+                      check('email')
+                      .trim()
+                      .isEmail()
+                      .withMessage('Must be a valid email')
+                      .bail()
+                      .isLength({max: 255})
+                      .withMessage('Email must be less than 255 characters')
+                      .bail()
+                      .normalizeEmail()];
 
 router.post('/registered', registerValidation, (req, res, next) => {
     const errors = validationResult(req);
-    if (!errors.isEmpty()) { // Error handling for field registration
-        // TO DO: Add error message
-        console.error(errors);
-        return res.redirect(`${rootPath}/register`);
+    if (!errors.isEmpty()) { // Error handling for register form validation
+        let errArray = errors.array();
+        let errString = "Error:\n\n";
+        for (let i = 0; i < errArray.length; i++) errString += `${errArray[i].msg} | `;
+        return res.send(errString);
     }
     const plainPassword = req.body.password;
     // Encrypt user's password using bcrypt hashing algorithm

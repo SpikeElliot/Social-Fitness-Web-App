@@ -59,13 +59,22 @@ router.get('/', redirectLogin, (req, res, next) => {
 });
 
 // Create validation chain for post form
-const postValidation = [body('content').trim().notEmpty().isLength({max: 255})];
+const postValidation = [body('content')
+                        .trim()
+                        .escape()
+                        .notEmpty()
+                        .withMessage('Post body must not be empty')
+                        .bail()
+                        .isLength({max: 255})
+                        .withMessage('Post body length must be a maximum of 255 characters')];
 
 router.post('/posted', postValidation, (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) { // Handle post text validation errors
-        // TO DO: Eventually add error message to give user without reloading page
-        return res.redirect(rootPath);
+        let errArray = errors.array();
+        let errString = "Error:\n\n";
+        for (let i = 0; i < errArray.length; i++) errString += `${errArray[i].msg} | `;
+        return res.send(errString);
     }
     // If no activity selected, set ID to null for database
     if (req.body.activity == "none") {

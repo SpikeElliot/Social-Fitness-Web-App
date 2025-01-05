@@ -6,13 +6,19 @@ let db = require('../index.js'); // Get pool connection
 // ROUTE HANDLERS
 
 // Create sanitisation and validation chain for search box
-let searchValidation = [check('searchtext').escape().trim().notEmpty()];
+let searchValidation = [check('searchtext')
+                        .trim()
+                        .escape()
+                        .notEmpty()
+                        .withMessage('Search text must not be empty')];
 
 router.get('/search/posts', searchValidation, redirectLogin, (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) { // Handle search validation errors
-        // TO DO: Eventually add error message to give user without reloading page
-        return res.redirect(`${rootPath}/login`);
+        let errArray = errors.array();
+        let errString = "Error:\n\n";
+        for (let i = 0; i < errArray.length; i++) errString += `${errArray[i].msg} | `;
+        return res.send(errString);
     }
     let newRecord = [req.session.user.id, req.query.searchtext];
     let sqlQuery = `CALL pr_searchedposts(?,?);`; // Search posts procedure

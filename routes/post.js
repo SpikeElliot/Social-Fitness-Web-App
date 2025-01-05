@@ -53,13 +53,22 @@ router.get('/post/:id', redirectLogin, (req, res, next) => {
 });
 
 // Create validation chain for comment field
-const commentValidation = [body('content').trim().notEmpty().isLength({max:255})];
+const commentValidation = [body('content')
+                           .trim()
+                           .escape()
+                           .notEmpty()
+                           .withMessage('Comment body must not be empty')
+                           .bail()
+                           .isLength({max: 255})
+                           .withMessage('Comment body length must be a maximum of 255 characters')];
 
 router.post('/commented', commentValidation, (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) { // Handle comment text validation errors
-        // TO DO: Eventually add error message to give user without redirecting
-        return res.redirect(rootPath);
+        let errArray = errors.array();
+        let errString = "Error:\n\n";
+        for (let i = 0; i < errArray.length; i++) errString += `${errArray[i].msg} | `;
+        return res.send(errString);
     }
     let newRecord = [req.body.user_id, req.body.post_id, req.body.content];
     let sqlQuery = `CALL pr_makecomment(?,?,?);`;
