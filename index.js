@@ -32,7 +32,7 @@ const rootPath = 'http://localhost:8000';
 global.rootPath = rootPath;
 
 // Define the database connection
-const db = mysql.createConnection ({
+let pool = mysql.createPool ({
     host: 'localhost',
     user: 'fitter_app',
     password: 'password',
@@ -40,12 +40,13 @@ const db = mysql.createConnection ({
 });
 
 // Connect to the database
-db.connect((err) => {
+pool.getConnection((err, connection) => {
     if (err) throw err;
     console.log('Connected to database');
+    connection.release();
 });
 
-global.db = db; // Set global database variable
+module.exports = pool; // Export pool
 
 // Define data for session
 app.use(session({

@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router(); // Create a router object
+let db = require('../index.js'); // Get pool connection
 
 // ROUTE HANDLERS
 

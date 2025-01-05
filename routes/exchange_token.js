@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router(); // Create a router object
+let db = require('../index.js'); // Get pool connection
 
 router.get('/strava_authorisation', (req, res, next) => {
     if (!req.query.code) {

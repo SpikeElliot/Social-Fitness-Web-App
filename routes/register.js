@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt'); // Bcrypt module for hashing passwords
 const saltRounds = 10; // Number of rounds for hash salting function
 const {check, validationResult} = require('express-validator'); // Validation
 const router = express.Router(); // Create a router object
+let db = require('../index.js'); // Get pool connection
 
 // ROUTE HANDLERS
 

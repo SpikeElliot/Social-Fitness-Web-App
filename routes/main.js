@@ -1,6 +1,7 @@
 const express = require('express');
 const {body, validationResult} = require('express-validator'); // Validation
 const router = express.Router(); // Create a router object
+let db = require('../index.js'); // Get pool connection
 
 // ROUTE HANDLERS
 
@@ -88,7 +89,7 @@ router.post('/posted', postValidation, (req, res, next) => {
     }
 });
 
-router.get('/logout', (req, res, next) => {
+router.get('/logout', redirectLogin, (req, res, next) => {
     console.log('----------------------------------------');
     console.log(`User ${req.session.user.id} logged out`);
     req.session.destroy();
