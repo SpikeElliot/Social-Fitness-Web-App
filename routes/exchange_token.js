@@ -35,6 +35,8 @@ router.post('/exchange_token', (req, res, next) => {
                 const stravaId = data.athlete.id;
                 const tokenExpiration = data.expires_at;
 
+                req.session.user.strava_id = stravaId;
+
                 let newRecord = [req.session.user.id, accessToken, 
                                  refreshToken, userCountry,
                                  userCity, stravaId, tokenExpiration];
@@ -54,7 +56,7 @@ router.post('/exchange_token', (req, res, next) => {
         } else {
             console.log('Result: Strava user data saved to database');
         }
-        res.redirect(`${rootPath}/getactivities`);
+        res.redirect(`${rootPath}/activities`);
     }
 
     exchangeToken();

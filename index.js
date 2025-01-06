@@ -106,7 +106,6 @@ const formatActivity = a => {
 // Set global functions
 global.redirectHome = redirectHome;
 global.redirectLogin = redirectLogin;
-global.timeConvert = timeConvert;
 global.formatActivity = formatActivity;
 
 // Load the route handlers
